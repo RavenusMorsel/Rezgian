@@ -1,0 +1,16 @@
+        body {
+            background: #00649e;
+            color: #eee;
+            font-family: "Georgia", serif;
+            text-align: center;
+            padding-top: 10%;
+        }
+        h1 {
+            font-size: 3rem;
+            letter-spacing: 2px;
+        }
+        p {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
