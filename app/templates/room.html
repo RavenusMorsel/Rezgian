@@ -10,18 +10,22 @@
     <div id="room-title">{{ room.name }}</div>
     <div id="room-description">{{ room.description }}</div>
 
-<div id="chat-container">
-    <div id="chat-log" style="height: 300px; overflow-y: scroll; background: #a9a9a9; color: #eee; padding: 10px;"></div>
+    <div id="chat-container">
+        <div id="chat-log"
+             style="height: 300px; overflow-y: scroll; background: #a9a9a9; color: #eee; padding: 10px;">
+        </div>
 
-    <input id="username" placeholder="Name" style="width: 100%; margin-top: 10px;">
-    <input id="message" placeholder="Message" style="width: 100%; margin-top: 5px;">
+        <input id="username" placeholder="Name" style="width: 100%; margin-top: 10px;">
+        <input id="message" placeholder="Message" style="width: 100%; margin-top: 5px;">
 
-    <button onclick="sendMessage()" style="width: 100%; margin-top: 5px;">Send</button>
-</div>
+        <button onclick="sendMessage()" style="width: 100%; margin-top: 5px;">Send</button>
+    </div>
 
     <script>
         const roomId = "{{ room.id }}";
     </script>
+
+    <!-- Only ONE chat script, the correct one -->
     <script src="/app/static/js/chat.js"></script>
 
 </body>
