@@ -1,31 +1,49 @@
+// --- Fetch and render messages ---
 async function fetchMessages() {
-    const res = await fetch("/api/chat/fetch");
-    const data = await res.json();
+    try {
+        const res = await fetch("/api/chat/fetch");
+        if (!res.ok) return;
 
-    const log = document.getElementById("chat-log");
-    log.innerHTML = "";
+        const data = await res.json();
+        const log = document.getElementById("chat-log");
 
-    data.messages.forEach(msg => {
-        const line = document.createElement("div");
-        line.textContent = `${msg.username}: ${msg.message}`;
-        log.appendChild(line);
-    });
+        log.innerHTML = ""; // clear before re-rendering
+
+        data.messages.forEach(msg => {
+            const line = document.createElement("div");
+            line.textContent = `${msg.username}: ${msg.message}`;
+            log.appendChild(line);
+        });
+
+        log.scrollTop = log.scrollHeight;
+    } catch (err) {
+        console.error("Fetch error:", err);
+    }
 }
 
+// --- Send a message ---
 async function sendMessage() {
-    const username = document.getElementById("username").value;
-    const message = document.getElementById("message").value;
+    const username = document.getElementById("username").value.trim();
+    const message = document.getElementById("message").value.trim();
 
-    const formData = new FormData();
-    formData.append("username", username);
-    formData.append("message", message);
+    if (!username || !message) return;
 
-    await fetch("/api/chat/send", {
-        method: "POST",
-        body: formData
-    });
+    try {
+        await fetch("/api/chat/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({ username, message })
+        });
 
-    document.getElementById("message").value = "";
+        document.getElementById("message").value = "";
+        fetchMessages();
+    } catch (err) {
+        console.error("Send error:", err);
+    }
 }
 
+// --- Poll every second ---
 setInterval(fetchMessages, 1000);
+
+// Initial load
+fetchMessages();
