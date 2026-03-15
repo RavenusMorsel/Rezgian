@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ room.name }}</title>
+    <link rel="stylesheet" href="/app/static/css/room.css">
+</head>
+
+<body style="background-image: url('{{ room.background }}');">
+
+    <div id="room-title">{{ room.name }}</div>
+    <div id="room-description">{{ room.description }}</div>
+
+    <div id="chat-log"></div>
+
+    <input id="chat-input" type="text" placeholder="Say something...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        const roomId = "{{ room.id }}";
+    </script>
+    <script src="/app/static/js/chat.js"></script>
+
+</body>
+</html>

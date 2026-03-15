@@ -1,0 +1,10 @@
+{
+    "id": "street",
+    "name": "Cobblestone Street",
+    "background": "/static/bg/street.png",
+    "description": "A narrow street lit by lanterns. The tavern door is to the west.",
+    "exits": {
+        "tavern": "tavern"
+    },
+    "npcs": []
+}
