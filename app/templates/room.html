@@ -10,10 +10,16 @@
     <div id="room-title">{{ room.name }}</div>
     <div id="room-description">{{ room.description }}</div>
 
-    <div id="chat-log"></div>
+<div id="chat-container">
+    <div id="chat-log" style="height: 300px; overflow-y: scroll; background: #222; color: #eee; padding: 10px;"></div>
 
-    <input id="chat-input" type="text" placeholder="Say something...">
-    <button onclick="sendMessage()">Send</button>
+    <input id="username" placeholder="Name" style="width: 100%; margin-top: 10px;">
+    <input id="message" placeholder="Message" style="width: 100%; margin-top: 5px;">
+
+    <button onclick="sendMessage()" style="width: 100%; margin-top: 5px;">Send</button>
+</div>
+
+<script src="/app/static/chat.js"></script>
 
     <script>
         const roomId = "{{ room.id }}";
