@@ -1,7 +1,7 @@
 {
     "id": "tavern",
     "name": "The Rusty Tankard",
-    "background": "/static/bg/tavern.png",
+    "background": "/app/static/bg/tavern.png",
     "description": "A warm tavern filled with chatter and the smell of roasted meat.",
     "exits": {
         "street": "street",
