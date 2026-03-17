@@ -24,27 +24,27 @@ body {
 
 #chat-container {
     width: 400px;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0);
     padding: 15px;
     border-radius: 8px;
     margin: 20px;
 }
 
 #chat-log {
-    background: #333;
+    background: #8685851d;
     border: 1px solid #555;
     height: 300px;
     overflow-y: scroll;
     padding: 10px;
-    color: #eee;
+    color: #000000;
 }
 
 input {
     padding: 8px;
     border: 1px solid #666;
     border-radius: 4px;
-    background: #222;
-    color: #eee;
+    background: #7b7b7b70;
+    color: #000000;
 }
 
 button {
