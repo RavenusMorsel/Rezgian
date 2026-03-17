@@ -1,7 +1,10 @@
+// roomId is injected by room.html:
+// <script>const roomId = "{{ room.id }}";</script>
+
 // --- Fetch and render messages ---
 async function fetchMessages() {
     try {
-        const res = await fetch("/api/chat/fetch");
+        const res = await fetch(`/api/chat/fetch/${roomId}`);
         if (!res.ok) return;
 
         const data = await res.json();
@@ -31,8 +34,12 @@ async function sendMessage() {
     try {
         await fetch("/api/chat/send", {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams({ username, message })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                room_id: roomId,
+                username: username,
+                message: message
+            })
         });
 
         document.getElementById("message").value = "";
