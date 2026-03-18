@@ -6,5 +6,6 @@
     "exits": {
         "tavern": "tavern"
     },
-    "npcs": []
+    "npcs": [],
+    "audio": ["/app/static/audio/StreetAmbience.ogg"]
 }
