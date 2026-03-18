@@ -9,11 +9,12 @@
         "cellar": "cellar"
     },
     "npcs": ["barkeep", "traveler"],
-    "audio": ["/app/static/audio/tavern1.ogg",
-     "/app/static/audio/tavern2.ogg", 
-     "/app/static/audio/tavern3.ogg", 
-     "/app/static/audio/tavern4.ogg", 
-     "/app/static/audio/tavern5.ogg", 
-     "/app/static/audio/tavern6.ogg", 
-     "/app/static/audio/tavern7.ogg"]
+    "audio": [
+        "/app/static/audio/Tavern1.ogg",
+        "/app/static/audio/Tavern2.ogg", 
+        "/app/static/audio/Tavern3.ogg", 
+        "/app/static/audio/Tavern4.ogg", 
+        "/app/static/audio/Tavern5.ogg", 
+        "/app/static/audio/Tavern6.ogg", 
+        "/app/static/audio/Tavern7.ogg"]
 }
