@@ -10,10 +10,10 @@
     },
     "npcs": ["barkeep", "traveler"],
     "audio": ["/app/static/audio/tavern1.ogg",
-     "/static/audio/tavern2.ogg", 
-     "/static/audio/tavern3.ogg", 
-     "/static/audio/tavern4.ogg", 
-     "/static/audio/tavern5.ogg", 
-     "/static/audio/tavern6.ogg", 
-     "/static/audio/tavern7.ogg"]
+     "/app/static/audio/tavern2.ogg", 
+     "/app/static/audio/tavern3.ogg", 
+     "/app/static/audio/tavern4.ogg", 
+     "/app/static/audio/tavern5.ogg", 
+     "/app/static/audio/tavern6.ogg", 
+     "/app/static/audio/tavern7.ogg"]
 }
