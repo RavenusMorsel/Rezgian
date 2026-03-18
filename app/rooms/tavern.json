@@ -8,5 +8,12 @@
         "street": "street",
         "cellar": "cellar"
     },
-    "npcs": ["barkeep", "traveler"]
+    "npcs": ["barkeep", "traveler"],
+    "audio": ["/app/static/audio/tavern1.ogg",
+     "/app/static/audio/tavern2.ogg", 
+     "/app/static/audio/tavern3.ogg", 
+     "/app/static/audio/tavern4.ogg", 
+     "/app/static/audio/tavern5.ogg", 
+     "/app/static/audio/tavern6.ogg", 
+     "/app/static/audio/tavern7.ogg"]
 }

@@ -54,3 +54,34 @@ setInterval(fetchMessages, 1000);
 
 // Initial load
 fetchMessages();
+
+
+let audioPlayer = null;
+let ambienceEnabled = false;
+
+function playRandomTrack() {
+    if (!roomAudio || roomAudio.length === 0) return;
+
+    const track = roomAudio[Math.floor(Math.random() * roomAudio.length)];
+    audioPlayer = new Audio(track);
+    audioPlayer.volume = 0.5;
+    audioPlayer.loop = true;
+    audioPlayer.play();
+}
+
+document.getElementById("ambience-toggle").addEventListener("click", () => {
+    ambienceEnabled = !ambienceEnabled;
+
+    const btn = document.getElementById("ambience-toggle");
+
+    if (ambienceEnabled) {
+        playRandomTrack();
+        btn.textContent = "Ambience: On";
+    } else {
+        if (audioPlayer) {
+            audioPlayer.pause();
+            audioPlayer = null;
+        }
+        btn.textContent = "Ambience: Off";
+    }
+});
