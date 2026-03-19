@@ -76,12 +76,12 @@ document.getElementById("ambience-toggle").addEventListener("click", () => {
 
     if (ambienceEnabled) {
         playRandomTrack();
-        btn.textContent = "Ambience: On";
+        btn.textContent = "♫";
     } else {
         if (audioPlayer) {
             audioPlayer.pause();
             audioPlayer = null;
         }
-        btn.textContent = "Ambience: Off";
+        btn.textContent = "♪";
     }
 });

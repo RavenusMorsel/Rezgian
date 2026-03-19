@@ -8,13 +8,27 @@ body {
     font-family: Arial, sans-serif;
     color: #eee;
 }
+
 #header {
     background: rgba(0, 0, 0, 0.5);
-    padding: 20px;
-    height: 15vh
+    height: 10vh
+    width: 100%;
     text-align: center;
+    position: fixed;
+    top: 0;
+    display: flex;
+
+}
+footer {
+    position: fixed;   
+    bottom: 0;
+    width: 100%;   
+  background-color: #7c7c7c7f;
+  padding: 8px;
+  text-align: center;
 }
 #room-title {
+    text-align: center;
     font-size: 32px;
     font-weight: bold;
     padding: 20px;
@@ -22,15 +36,18 @@ body {
 }
 
 #room-description {
-    font-size: 18px;
-    padding: 0 20px 20px 20px;
-    max-width: 800px;
+    background-color: #7b7b7b70;
+    align-content: spa;
+    bottom: 0vh;
+    max-height: 10vh;
+    font-size: 10px;
     text-shadow: 1px 1px 2px #000;
 }
 
 #chat-container {
     width: 40%;
     max-width: 50%;
+    max-height: 50vh;
     background: rgba(0, 0, 0, 0);
     border-radius: 7px;
     margin: 7%;
@@ -39,14 +56,14 @@ body {
 #chat-log {
     background: #8685851d;
     border: 1px solid #555;
-    height: 50vh;
+    height: 25vh;
     overflow-y: scroll;
     padding: 10px;
     color: #000000;
 }
 
 input {
-    padding: 8px;
+    padding: 2px;
     border: 1px solid #666;
     border-radius: 4px;
     background: #7b7b7b70;
@@ -54,7 +71,7 @@ input {
 }
 
 button {
-    padding: 10px;
+    padding: 2px;
     background: #444;
     border: 1px solid #666;
     border-radius: 4px;

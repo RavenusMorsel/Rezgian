@@ -7,9 +7,8 @@
 
 <body style="background-image: url('{{ room.background }}');">
 <div id=header>
-    <button id="ambience-toggle">Ambience: Off</button>
-    <div id="room-title">{{ room.name }}</div>
-    <div id="room-description">{{ room.description }}</div>
+        <div id="room-title">{{ room.name }}</div>
+    
 </div>
     <div id="chat-container">
         <div id="chat-log"
@@ -21,7 +20,9 @@
 
         <button onclick="sendMessage()" style="width: 100%; margin-top: 5px;">Send</button>
     </div>
-
+    <footer>
+            <div id="room-description">{{ room.description }} <button id="ambience-toggle">♪</button></div>
+</footer>
     <script>
         const roomId = "{{ room.id }}";
         const roomAudio = {{ room.audio | tojson }};
@@ -29,6 +30,5 @@
 
     <!-- Only ONE chat script, the correct one -->
     <script src="/app/static/js/chat.js"></script>
-
 </body>
 </html>
