@@ -192,12 +192,13 @@
 </head>
 <body>
 
-<header>
-    <div id="room-title">{{ room.name }}</div>
-</header>
+
 
 <div id="container">
     <div id="Main">
+        <header>
+    <div id="room-title">{{ room.name }}</div>
+</header>
         <div id="chat-wrapper">
             <div id="chat-container">
                 <div id="chat-log"></div>
@@ -205,18 +206,19 @@
                     <input id="username" placeholder="Your name..." autocomplete="off">
                     <input id="message" placeholder="Type your message..." autocomplete="off">
                     <button onclick="sendMessage()">Send</button>
+                <footer>
+    <div id="room-description">
+        {{ room.description }}
+        <button id="ambience-toggle">♪</button>
+    </div>
+</footer>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<footer>
-    <div id="room-description">
-        {{ room.description }}
-        <button id="ambience-toggle">♪</button>
-    </div>
-</footer>
+
 
 <script>
     const roomId = "{{ room.id }}";
