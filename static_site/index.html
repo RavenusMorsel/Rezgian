@@ -1,32 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Rezgian</title>
-    <style>
-        body {
-            background: #00649e;
-            color: #eee;
-            font-family: "Georgia", serif;
-            text-align: center;
-            padding-top: 10%;
-        }
-        h1 {
-            font-size: 3rem;
-            letter-spacing: 2px;
-        }
-        p {
-            margin-top: 1rem;
-            font-size: 1.2rem;
-            opacity: 0.8;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Rezgian</title>
+
+<style>
+body {
+    padding: 0;
+    margin: 0;
+    padding-left: 3vh;
+    padding-top: 3vh;
+}
+
+/* Outer frame */
+#container {
+    border-left: 2.5vh solid #614727;  /* left bevel */
+    border-top: 2.5vh solid #8a6537;   /* top bevel */
+    padding: 0;                        /* keeps bevel tight */
+}
+
+/* Inner shadow */
+#Main {
+    background: #f7b15b;
+    padding: 20vh;
+
+    /* space for the shadow tile */
+    border-top: 2.5vh solid transparent;
+    border-left: 2.5vh solid transparent;
+
+    /* inner shadow tile */
+    border-image-source: url("https://i.imgur.com/180H0IG.png");
+    border-image-slice: 13;
+    border-image-repeat: stretch;
+}
+</style>
+
 </head>
+
 <body>
-    <h1>Welcome to Rezgian</h1>
-    <p>A cozy tavern where adventurers gather to share tales and embark on quests.  
-</p>
-    <p>A world of stories, characters, and quiet magic.</p><br />
-    <p>Click <a href="https://rezgian.online/room/tavern" style="color: #eee; text-decoration: underline;">here</a> to enter the tavern.</p>
+<div id="container">
+    <div id="Main">
+        <img src="static/images/Background.jpg" alt="Background" style="width: 100%; height: auto;">
+        Welcome to Rezgian<br><br>
+        A cozy tavern where adventurers gather to share tales and embark on quests.<br>
+        A world of stories, characters, and quiet magic.<br><br>
+        Click <a href="https://rezgian.online/room/tavern" style="color: #eee; text-decoration: underline;">here</a> to enter the tavern.
+    </div>
+</div>
 </body>
 </html>
