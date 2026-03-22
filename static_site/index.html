@@ -3,49 +3,90 @@
 <head>
 <meta charset="UTF-8">
 <title>Rezgian</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
-    padding: 0;
     margin: 0;
-    padding-left: 3vh;
-    padding-top: 3vh;
+    height: 100vh;
+    overflow: hidden;
+    background: #ffffff;
+    font-family: 'Georgia', serif;
 }
 
-/* Outer frame */
 #container {
-    border-left: 2.5vh solid #614727;  /* left bevel */
-    border-top: 2.5vh solid #8a6537;   /* top bevel */
-    padding: 0;                        /* keeps bevel tight */
+    position: fixed;
+    inset: 3vh;               /* top,right,bottom,left */
+    border-left: 2.5vh solid #614727;
+    border-top:  2.5vh solid #8a6537;
+    border-right: 2.5vh solid #614727;
+    border-bottom: 2.5vh solid #8a6537;
+    box-shadow: -1vh 1vh 15px rgb(0, 0, 0);
+    overflow: hidden;
 }
 
-/* Inner shadow */
 #Main {
     background: #f7b15b;
-    padding: 20vh;
-
-    /* space for the shadow tile */
-    border-top: 2.5vh solid transparent;
-    border-left: 2.5vh solid transparent;
-
-    /* inner shadow tile */
+    height: 100%;
+    border:  2.5vh solid transparent;
     border-image-source: url("https://i.imgur.com/180H0IG.png");
-    border-image-slice: 13;
+    border-image-slice: 14;          /* ← try 20–30 */
     border-image-repeat: stretch;
+    padding: 5vmin;                  /* responsive padding */
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+#Material {
+    max-width: 75ch;                 /* better readable line length */
+    margin: 0 auto;
+    border: 2.5vh solid transparent;
+    border-image-source: url("https://i.imgur.com/R5LcgFz.png");
+    border-image-slice: 14;          /* ← adjust if needed */
+    border-image-repeat: stretch;
+    padding: 4vmin;
+    color: #fffdf7;
+    font-size: clamp(1.1rem, 3.5vw, 2.2rem);
+    line-height: 1.55;
+    text-shadow: 0 1px 2px #0004;
+}
+
+#Material img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-bottom: 1.5em;
 }
 </style>
-
 </head>
-
 <body>
+
 <div id="container">
     <div id="Main">
-        <img src="/static/images/Background.jpg" alt="Background" style="width: 100%; height: auto;">
-        Welcome to Rezgian<br><br>
-        A cozy tavern where adventurers gather to share tales and embark on quests.<br>
-        A world of stories, characters, and quiet magic.<br><br>
-        Click <a href="https://rezgian.online/room/tavern" style="color: #eee; text-decoration: underline;">here</a> to enter the tavern.
+        <div id="Material">
+
+            <img src="download.png" alt="Tavern interior or cozy fantasy scene">
+
+            <h1 style="margin-top:0; text-align:center; color:#4a2f0d; text-shadow:0 2px 4px #0006;">
+                Welcome to Rezgian
+            </h1>
+
+            <p style="text-align:center; font-size:1.2em;">
+                A cozy tavern where adventurers gather to share tales<br>
+                and embark on quests.<br>
+                A world of stories, characters, and quiet magic.
+            </p>
+
+            <p style="text-align:center; margin-top:3em;">
+                <a href="https://rezgian.online/room/tavern"
+                   style="color:#3c2f0f; font-size:1.4em; text-decoration:none; background:#e8c080; padding:0.8em 1.6em; border-radius:12px; box-shadow:0 3px 10px #0004;">
+                    Enter the Tavern →
+                </a>
+            </p>
+
+        </div>
     </div>
 </div>
+
 </body>
 </html>
