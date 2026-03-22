@@ -2,7 +2,7 @@
             margin: 0;
             height: 100vh;
             overflow: hidden;
-            background: #2c1e0f url('{{ room.background }}') center/cover no-repeat;
+            background: #ffffff url('{{ room.background }}') center/cover no-repeat;
             font-family: 'Georgia', serif;
             color: #fffdf7;
         }
