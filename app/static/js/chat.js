@@ -5,6 +5,7 @@ let activeCharacter = null;
 let actionModeEnabled = false;
 let chatSocket = null;
 let economyState = null;
+let economyRouteMissing = false;
 
 function getToken() {
     return localStorage.getItem(TOKEN_KEY);
@@ -128,10 +129,25 @@ function renderEconomyPanel() {
 }
 
 async function fetchEconomyState() {
+    if (economyRouteMissing) {
+        return;
+    }
+
     try {
         const res = await fetch(`/api/economy/state?room_id=${encodeURIComponent(roomId)}`, {
             headers: { Authorization: `Bearer ${getToken()}` }
         });
+
+        if (res.status === 404) {
+            economyRouteMissing = true;
+            const panel = document.getElementById("economy-panel");
+            if (panel) {
+                panel.hidden = true;
+            }
+            console.info("Economy API not available yet. Restart/redeploy backend to enable it.");
+            return;
+        }
+
         if (!res.ok) return;
         economyState = await res.json();
         renderEconomyPanel();
