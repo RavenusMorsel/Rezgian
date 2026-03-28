@@ -1,25 +1,17 @@
-// roomId is injected by room.html:
-// <script>const roomId = "{{ room.id }}";</script>
+// roomId and roomAudio are injected by room.html
 
 const TOKEN_KEY = "rezgian_character_token";
 let activeCharacter = null;
 let actionModeEnabled = false;
+let chatSocket = null;
 
 function getToken() {
     return localStorage.getItem(TOKEN_KEY);
 }
 
-function authHeaders() {
-    const token = getToken();
-    if (!token) {
-        return { "Content-Type": "application/json" };
-    }
-
-    return {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-    };
-}
+// ---------------------------------------------------------------------------
+// Character load
+// ---------------------------------------------------------------------------
 
 async function loadCharacter() {
     const token = getToken();
@@ -50,71 +42,100 @@ async function loadCharacter() {
     }
 }
 
-// --- Fetch and render messages ---
-async function fetchMessages() {
+// ---------------------------------------------------------------------------
+// Message rendering
+// ---------------------------------------------------------------------------
+
+function appendMessage(username, message) {
+    const log = document.getElementById("chat-log");
+    const line = document.createElement("div");
+
+    const isAction = typeof message === "string" && message.startsWith("/me ");
+    if (isAction) {
+        line.classList.add("chat-action");
+        line.textContent = `* ${username} ${message.slice(4).trim()}`;
+    } else {
+        line.textContent = `${username}: ${message}`;
+    }
+
+    log.appendChild(line);
+    log.scrollTop = log.scrollHeight;
+}
+
+// ---------------------------------------------------------------------------
+// Load history once via HTTP on page open
+// ---------------------------------------------------------------------------
+
+async function fetchHistory() {
     try {
         const res = await fetch(`/api/chat/fetch/${roomId}`);
         if (!res.ok) return;
-
         const data = await res.json();
         const log = document.getElementById("chat-log");
-
-        log.innerHTML = ""; // clear before re-rendering
-
-        data.messages.forEach(msg => {
-            const line = document.createElement("div");
-
-            const isAction = typeof msg.message === "string" && msg.message.startsWith("/me ");
-            if (isAction) {
-                line.classList.add("chat-action");
-                const actionText = msg.message.slice(4).trim();
-                line.textContent = `* ${msg.username} ${actionText}`;
-            } else {
-                line.textContent = `${msg.username}: ${msg.message}`;
-            }
-
-            log.appendChild(line);
-        });
-
-        log.scrollTop = log.scrollHeight;
+        log.innerHTML = "";
+        data.messages.forEach(msg => appendMessage(msg.username, msg.message));
     } catch (err) {
-        console.error("Fetch error:", err);
+        console.error("History fetch error:", err);
     }
 }
 
-// --- Send a message ---
-async function sendMessage() {
+// ---------------------------------------------------------------------------
+// WebSocket
+// ---------------------------------------------------------------------------
+
+function openSocket() {
+    const token = getToken();
+    if (!token) return;
+
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const url = `${protocol}//${window.location.host}/api/chat/ws/${roomId}?token=${encodeURIComponent(token)}`;
+
+    chatSocket = new WebSocket(url);
+
+    chatSocket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        appendMessage(data.username, data.message);
+    };
+
+    chatSocket.onclose = (event) => {
+        if (event.code === 4001) {
+            localStorage.removeItem(TOKEN_KEY);
+            window.location.href = "/";
+            return;
+        }
+        // Reconnect after 2s on unexpected close
+        setTimeout(openSocket, 2000);
+    };
+
+    chatSocket.onerror = () => {
+        chatSocket.close();
+    };
+}
+
+// ---------------------------------------------------------------------------
+// Send
+// ---------------------------------------------------------------------------
+
+function sendMessage() {
     const messageInput = document.getElementById("message");
     const message = messageInput.value.trim();
 
     if (!activeCharacter || !message) return;
+    if (!chatSocket || chatSocket.readyState !== WebSocket.OPEN) return;
 
     const messageToSend = actionModeEnabled ? `/me ${message}` : message;
-
-    try {
-        await fetch("/api/chat/send", {
-            method: "POST",
-            headers: authHeaders(),
-            body: JSON.stringify({
-                room_id: roomId,
-                message: messageToSend
-            })
-        });
-
-        messageInput.value = "";
-        fetchMessages();
-    } catch (err) {
-        console.error("Send error:", err);
-    }
+    chatSocket.send(messageToSend);
+    messageInput.value = "";
 }
+
+// ---------------------------------------------------------------------------
+// Controls
+// ---------------------------------------------------------------------------
 
 function setActionMode(enabled) {
     actionModeEnabled = enabled;
     const actionButton = document.getElementById("action-toggle");
-    if (!actionButton) {
-        return;
-    }
-
+    if (!actionButton) return;
     actionButton.classList.toggle("active", enabled);
     actionButton.textContent = "*";
     actionButton.title = enabled ? "Action mode enabled (/me)" : "Toggle action (/me)";
@@ -127,9 +148,7 @@ function initializeChatControls() {
     if (actionButton) {
         actionButton.addEventListener("click", () => {
             setActionMode(!actionModeEnabled);
-            if (messageInput) {
-                messageInput.focus();
-            }
+            if (messageInput) messageInput.focus();
         });
     }
 
@@ -145,8 +164,16 @@ function initializeChatControls() {
     setActionMode(false);
 }
 
-// --- Poll every second ---
-setInterval(fetchMessages, 1000);
+// ---------------------------------------------------------------------------
+// Init
+// ---------------------------------------------------------------------------
+
+(async () => {
+    await loadCharacter();
+    await fetchHistory();
+    openSocket();
+    initializeChatControls();
+})();
 
 // Initial load
 initializeChatControls();
