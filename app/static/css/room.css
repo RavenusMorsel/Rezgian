@@ -45,7 +45,7 @@
         }
 
         #exits-panel {
-            position: absolute;
+            position: fixed;
             right: 0px;
             top: 52%;
             transform: translateY(-50%);
