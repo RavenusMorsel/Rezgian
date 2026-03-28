@@ -3,6 +3,7 @@
 
 const TOKEN_KEY = "rezgian_character_token";
 let activeCharacter = null;
+let actionModeEnabled = false;
 
 function getToken() {
     return localStorage.getItem(TOKEN_KEY);
@@ -62,7 +63,16 @@ async function fetchMessages() {
 
         data.messages.forEach(msg => {
             const line = document.createElement("div");
-            line.textContent = `${msg.username}: ${msg.message}`;
+
+            const isAction = typeof msg.message === "string" && msg.message.startsWith("/me ");
+            if (isAction) {
+                line.classList.add("chat-action");
+                const actionText = msg.message.slice(4).trim();
+                line.textContent = `* ${msg.username} ${actionText}`;
+            } else {
+                line.textContent = `${msg.username}: ${msg.message}`;
+            }
+
             log.appendChild(line);
         });
 
@@ -74,9 +84,12 @@ async function fetchMessages() {
 
 // --- Send a message ---
 async function sendMessage() {
-    const message = document.getElementById("message").value.trim();
+    const messageInput = document.getElementById("message");
+    const message = messageInput.value.trim();
 
     if (!activeCharacter || !message) return;
+
+    const messageToSend = actionModeEnabled ? `/me ${message}` : message;
 
     try {
         await fetch("/api/chat/send", {
@@ -84,21 +97,59 @@ async function sendMessage() {
             headers: authHeaders(),
             body: JSON.stringify({
                 room_id: roomId,
-                message: message
+                message: messageToSend
             })
         });
 
-        document.getElementById("message").value = "";
+        messageInput.value = "";
         fetchMessages();
     } catch (err) {
         console.error("Send error:", err);
     }
 }
 
+function setActionMode(enabled) {
+    actionModeEnabled = enabled;
+    const actionButton = document.getElementById("action-toggle");
+    if (!actionButton) {
+        return;
+    }
+
+    actionButton.classList.toggle("active", enabled);
+    actionButton.textContent = enabled ? "*" : "action";
+    actionButton.title = enabled ? "Action mode enabled (/me)" : "Toggle action (/me)";
+}
+
+function initializeChatControls() {
+    const messageInput = document.getElementById("message");
+    const actionButton = document.getElementById("action-toggle");
+
+    if (actionButton) {
+        actionButton.addEventListener("click", () => {
+            setActionMode(!actionModeEnabled);
+            if (messageInput) {
+                messageInput.focus();
+            }
+        });
+    }
+
+    if (messageInput) {
+        messageInput.addEventListener("keydown", event => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+    }
+
+    setActionMode(false);
+}
+
 // --- Poll every second ---
 setInterval(fetchMessages, 1000);
 
 // Initial load
+initializeChatControls();
 loadCharacter().then(fetchMessages);
 
 
