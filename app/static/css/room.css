@@ -77,7 +77,7 @@
             border-bottom: 8px solid #5a3110;
             border-left: 8px solid #733908;
             padding: 5px 8px;
-            drop-shadow: -4px 4px 15px #000000;
+            box-shadow: -4px 4px 15px #000000;
             transition: background 0.15s;
         }
 
