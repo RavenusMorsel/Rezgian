@@ -74,6 +74,7 @@ async function renderTokenQr(token) {
 async function openTokenModal(token) {
     const { modal, output } = getTokenModalElements();
     if (!modal || !output) {
+        setStatus(`Saved token: ${token}`);
         return;
     }
 
@@ -198,7 +199,10 @@ function showToken() {
     }
 
     openTokenModal(token);
-    setStatus("Export panel opened. Scan the QR code or copy the token text.");
+    const { modal } = getTokenModalElements();
+    if (modal) {
+        setStatus("Export panel opened. Scan the QR code or copy the token text.");
+    }
 }
 
 function initializeTokenUI() {
@@ -210,18 +214,43 @@ function initializeTokenUI() {
     }
 }
 
-document.getElementById("create-btn").addEventListener("click", createCharacter);
-document.getElementById("continue-btn").addEventListener("click", continueCharacter);
-document.getElementById("import-btn").addEventListener("click", importToken);
-document.getElementById("show-token-btn").addEventListener("click", showToken);
-document.getElementById("copy-token-btn").addEventListener("click", copyTokenFromModal);
-document.getElementById("close-token-btn").addEventListener("click", closeTokenModal);
-document.getElementById("close-token-modal").addEventListener("click", closeTokenModal);
-document.getElementById("token-modal").addEventListener("click", (event) => {
-    if (event.target && event.target.id === "token-modal") {
-        closeTokenModal();
-    }
-});
+const createButton = document.getElementById("create-btn");
+const continueButton = document.getElementById("continue-btn");
+const importButton = document.getElementById("import-btn");
+const showTokenButton = document.getElementById("show-token-btn");
+const copyTokenButton = document.getElementById("copy-token-btn");
+const closeTokenButton = document.getElementById("close-token-btn");
+const closeTokenModalButton = document.getElementById("close-token-modal");
+const tokenModal = document.getElementById("token-modal");
+
+if (createButton) {
+    createButton.addEventListener("click", createCharacter);
+}
+if (continueButton) {
+    continueButton.addEventListener("click", continueCharacter);
+}
+if (importButton) {
+    importButton.addEventListener("click", importToken);
+}
+if (showTokenButton) {
+    showTokenButton.addEventListener("click", showToken);
+}
+if (copyTokenButton) {
+    copyTokenButton.addEventListener("click", copyTokenFromModal);
+}
+if (closeTokenButton) {
+    closeTokenButton.addEventListener("click", closeTokenModal);
+}
+if (closeTokenModalButton) {
+    closeTokenModalButton.addEventListener("click", closeTokenModal);
+}
+if (tokenModal) {
+    tokenModal.addEventListener("click", (event) => {
+        if (event.target && event.target.id === "token-modal") {
+            closeTokenModal();
+        }
+    });
+}
 document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
         closeTokenModal();
