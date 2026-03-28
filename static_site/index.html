@@ -17,10 +17,10 @@ body {
 #container {
     position: fixed;
     inset: 3vh;               /* top,right,bottom,left */
-    border-left: 2.5vh solid #614727;
-    border-top:  2.5vh solid #8a6537;
-    border-right: 2.5vh solid #614727;
-    border-bottom: 2.5vh solid #8a6537;
+    border-left: min(2.5vh, 18px) solid #614727;
+    border-top:  min(2.5vh, 18px) solid #8a6537;
+    border-right: min(2.5vh, 18px) solid #614727;
+    border-bottom: min(2.5vh, 18px) solid #8a6537;
     box-shadow: -1vh 1vh 15px rgb(0, 0, 0);
     overflow: hidden;
 }
@@ -28,7 +28,7 @@ body {
 #Main {
     background: #f7b15b;
     height: 100%;
-    border:  2.5vh solid transparent;
+    border:  min(2.5vh, 18px) solid transparent;
     border-image-source: url("https://i.imgur.com/180H0IG.png");
     border-image-slice: 14;          /* ← try 20–30 */
     border-image-repeat: stretch;
@@ -46,7 +46,7 @@ body {
     border-image-repeat: stretch;
     padding: 4vmin;
     color: #fffdf7;
-    font-size: clamp(1.1rem, 3.5vw, 2.2rem);
+    font-size: clamp(1rem, 0.35vw + 0.92rem, 1.1rem);
     line-height: 1.55;
     text-shadow: 0 1px 2px #0004;
 }
@@ -56,6 +56,22 @@ body {
     width: 100%;
     height: auto;
     margin-bottom: 1.5em;
+}
+
+@media (max-width: 768px) {
+    #container {
+        inset: 1.5vh;
+    }
+
+    #Main {
+        padding: 3.2vmin;
+    }
+
+    #Material {
+        border-width: min(2vh, 14px);
+        padding: 3.5vmin;
+        font-size: clamp(0.95rem, 2.9vw, 1.02rem);
+    }
 }
 </style>
 </head>
