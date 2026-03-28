@@ -12,6 +12,15 @@
 <div id="container">
     <div id="Main">
 
+        {% if room.exits %}
+        <aside id="exits-panel" aria-label="Room exits">
+            <div id="exits-title">Exits</div>
+            {% for exit_name, target_room in room.exits.items() %}
+            <a class="exit-button" href="/room/{{ target_room }}">{{ exit_name | replace('_', ' ') | title }}</a>
+            {% endfor %}
+        </aside>
+        {% endif %}
+
         <header>
             <div id="room-title">{{ room.name }}</div>
             <div id="active-character">Not signed in</div>
