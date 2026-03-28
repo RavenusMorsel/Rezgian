@@ -192,6 +192,33 @@
             font-size: 0.84rem;
             max-height: 42vh;
             overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #a56a2b rgba(27, 16, 8, 0.55);
+        }
+
+        .pullout-drawer::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .pullout-drawer::-webkit-scrollbar-track {
+            background: rgba(27, 16, 8, 0.55);
+            border-radius: 999px;
+            box-shadow: inset 0 0 0 1px rgba(160, 116, 54, 0.18);
+        }
+
+        .pullout-drawer::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #c48a43 0%, #8f5a22 100%);
+            border-radius: 999px;
+            border: 1px solid rgba(58, 33, 11, 0.8);
+            box-shadow: inset 0 0 0 1px rgba(245, 210, 149, 0.18);
+        }
+
+        .pullout-drawer::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #d79b51 0%, #a36628 100%);
+        }
+
+        .pullout-drawer::-webkit-scrollbar-corner {
+            background: transparent;
         }
 
         .econ-title {
