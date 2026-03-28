@@ -180,7 +180,7 @@
 
         .pullout-drawer {
             position: absolute;
-            right: 12px;
+            right: 50%;
             z-index: 29;
             width: min(300px, calc(100% - 24px));
             background: rgba(36, 23, 10, 0.74);
