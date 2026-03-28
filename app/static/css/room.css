@@ -115,11 +115,11 @@
         }
 
         #chat-log > div {
-            padding: 4px 8px;
+            padding: 2px 2px;
             margin-bottom: 6px;
             border: 1px solid rgba(96, 68, 31, 0.35);
             border-radius: 4px;
-            background: rgba(255, 245, 222, 0.3);
+            background: rgba(0, 0, 0, 0.104);
         }
 
         #chat-log > div:last-child {
