@@ -130,6 +130,21 @@
             white-space: nowrap;
         }
 
+        .icon-toggle {
+            border: 1px solid rgba(181, 132, 72, 0.7);
+            background: rgba(96, 68, 31, 0.65);
+            color: #f7e8c0;
+            border-radius: 999px;
+            padding: 4px 9px;
+            font-size: 0.95rem;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .icon-toggle:hover {
+            background: rgba(122, 87, 39, 0.85);
+        }
+
         #coin-display {
             font-size: clamp(0.78rem, 0.18vw + 0.75rem, 0.9rem);
             color: #ffdd85;
@@ -159,10 +174,6 @@
             background: rgba(88, 56, 23, 0.9);
         }
 
-        #shop-toggle {
-            top: 84px;
-        }
-
         #inventory-toggle {
             bottom: 84px;
         }
@@ -189,6 +200,33 @@
             font-size: 0.67rem;
             margin-bottom: 6px;
             color: #d9bf8d;
+        }
+
+        .drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .drawer-header .econ-title {
+            margin-bottom: 0;
+        }
+
+        .drawer-close {
+            border: 1px solid rgba(196, 152, 88, 0.65);
+            background: rgba(55, 34, 14, 0.88);
+            color: #f0ddbb;
+            border-radius: 4px;
+            font-size: 0.74rem;
+            line-height: 1;
+            padding: 3px 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .drawer-close:hover {
+            background: rgba(88, 56, 23, 0.9);
         }
 
         .pullout-drawer.top {
@@ -455,15 +493,10 @@
                 gap: 8px;
             }
 
-            #shop-toggle,
             #inventory-toggle {
                 right: 8px;
                 padding: 5px 8px;
                 font-size: 0.72rem;
-            }
-
-            #shop-toggle {
-                top: 118px;
             }
 
             #inventory-toggle {

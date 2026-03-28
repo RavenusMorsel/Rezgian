@@ -7,6 +7,24 @@ let chatSocket = null;
 let economyState = null;
 let economyRouteMissing = false;
 
+function closeShopPanel() {
+    const shopPanel = document.getElementById("shop-panel");
+    if (shopPanel) {
+        shopPanel.hidden = true;
+    }
+}
+
+function openShopPanel() {
+    const shopPanel = document.getElementById("shop-panel");
+    const inventoryPanel = document.getElementById("inventory-panel");
+    if (inventoryPanel) {
+        inventoryPanel.hidden = true;
+    }
+    if (shopPanel) {
+        shopPanel.hidden = false;
+    }
+}
+
 function getToken() {
     return localStorage.getItem(TOKEN_KEY);
 }
@@ -61,7 +79,7 @@ function renderEconomyPanel() {
     const inventoryPanel = document.getElementById("inventory-panel");
     const inventoryToggle = document.getElementById("inventory-toggle");
     const shopPanel = document.getElementById("shop-panel");
-    const shopToggle = document.getElementById("shop-toggle");
+    const shopToggle = document.getElementById("shop-toggle-header");
     const shopItemsEl = document.getElementById("shop-items");
 
     if (!economyState) {
@@ -156,7 +174,7 @@ async function fetchEconomyState() {
 
         if (res.status === 404) {
             economyRouteMissing = true;
-            const shopToggle = document.getElementById("shop-toggle");
+            const shopToggle = document.getElementById("shop-toggle-header");
             const shopPanel = document.getElementById("shop-panel");
             const inventoryToggle = document.getElementById("inventory-toggle");
             const inventoryPanel = document.getElementById("inventory-panel");
@@ -189,6 +207,7 @@ async function buyItem(itemId, quantity) {
             const data = await res.json().catch(() => null);
             throw new Error(data?.detail || `Buy failed (${res.status})`);
         }
+        closeShopPanel();
         await fetchEconomyState();
     } catch (err) {
         console.error("Buy error:", err);
@@ -344,8 +363,9 @@ function setActionMode(enabled) {
 function initializeChatControls() {
     const messageInput = document.getElementById("message");
     const actionButton = document.getElementById("action-toggle");
-    const shopToggle = document.getElementById("shop-toggle");
+    const shopToggle = document.getElementById("shop-toggle-header");
     const shopPanel = document.getElementById("shop-panel");
+    const shopClose = document.getElementById("shop-close");
     const inventoryToggle = document.getElementById("inventory-toggle");
     const inventoryPanel = document.getElementById("inventory-panel");
 
@@ -367,13 +387,17 @@ function initializeChatControls() {
 
     if (shopToggle && shopPanel) {
         shopToggle.addEventListener("click", () => {
-            const nextHidden = !shopPanel.hidden;
-            shopPanel.hidden = nextHidden;
-            shopToggle.textContent = nextHidden ? "Shop" : "Shop -";
-            if (!nextHidden && inventoryPanel) {
-                inventoryPanel.hidden = true;
-                if (inventoryToggle) inventoryToggle.textContent = "Pack";
+            if (shopPanel.hidden) {
+                openShopPanel();
+            } else {
+                closeShopPanel();
             }
+        });
+    }
+
+    if (shopClose) {
+        shopClose.addEventListener("click", () => {
+            closeShopPanel();
         });
     }
 
@@ -382,12 +406,17 @@ function initializeChatControls() {
             const nextHidden = !inventoryPanel.hidden;
             inventoryPanel.hidden = nextHidden;
             inventoryToggle.textContent = nextHidden ? "Pack" : "Pack -";
-            if (!nextHidden && shopPanel) {
-                shopPanel.hidden = true;
-                if (shopToggle) shopToggle.textContent = "Shop";
+            if (!nextHidden) {
+                closeShopPanel();
             }
         });
     }
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            closeShopPanel();
+        }
+    });
 
     setActionMode(false);
 }

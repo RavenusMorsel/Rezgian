@@ -24,12 +24,15 @@
             <div id="character-meta">
                 <div id="active-character">Not signed in</div>
                 <div id="coin-display">Coins: 0</div>
+                <button id="shop-toggle-header" type="button" class="icon-toggle" hidden title="Open tavern counter">🍺</button>
             </div>
         </header>
 
-        <button id="shop-toggle" type="button" class="pullout-toggle" hidden>Shop</button>
         <aside id="shop-panel" class="pullout-drawer top" hidden>
-            <div class="econ-title">Tavern Counter</div>
+            <div class="drawer-header">
+                <div class="econ-title">Tavern Counter</div>
+                <button id="shop-close" type="button" class="drawer-close" aria-label="Close shop">x</button>
+            </div>
             <div id="shop-items"></div>
         </aside>
 
