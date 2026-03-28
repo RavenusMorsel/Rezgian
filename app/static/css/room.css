@@ -72,11 +72,10 @@
             text-decoration: none;
             font-size: 1rem;
             color: #46330a;
-            background: #b58346;
-            border-top: 8px solid #5a3517;
-            border-bottom: 8px solid #5a3517;
-            border-left: 8px solid #8a6537;
-   
+            background: #a55a18;
+            border-top: 8px solid #8c4a08;
+            border-bottom: 8px solid #5a3110;
+            border-left: 8px solid #733908;
             padding: 5px 8px;
             transition: background 0.15s;
         }
