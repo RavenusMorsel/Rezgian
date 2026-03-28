@@ -1,0 +1,18 @@
+# SQLite databases
+rezgian.db
+*.db
+*.sqlite3
+
+# Python cache/artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Local virtual environments
+.venv/
+venv/
+env/
+
+# Logs
+logs/
+*.log
