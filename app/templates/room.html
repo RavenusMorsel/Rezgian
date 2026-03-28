@@ -21,19 +21,22 @@
 
         <header>
             <div id="room-title">{{ room.name }}</div>
-            <div id="active-character">Not signed in</div>
+            <div id="character-meta">
+                <div id="active-character">Not signed in</div>
+                <div id="coin-display">Coins: 0</div>
+            </div>
         </header>
 
-        <aside id="economy-panel" aria-label="Economy panel">
-            <div id="coin-display">Coins: 0</div>
-            <div id="shop-panel" hidden>
-                <div class="econ-title">Tavern Counter</div>
-                <div id="shop-items"></div>
-            </div>
-            <div id="inventory-panel">
-                <div class="econ-title">Inventory</div>
-                <div id="inventory-items">Empty pack</div>
-            </div>
+        <button id="shop-toggle" type="button" class="pullout-toggle" hidden>Shop</button>
+        <aside id="shop-panel" class="pullout-drawer top" hidden>
+            <div class="econ-title">Tavern Counter</div>
+            <div id="shop-items"></div>
+        </aside>
+
+        <button id="inventory-toggle" type="button" class="pullout-toggle bottom">Pack</button>
+        <aside id="inventory-panel" class="pullout-drawer bottom" hidden>
+            <div class="econ-title">Inventory</div>
+            <div id="inventory-items">Empty pack</div>
         </aside>
 
         <div id="chat-wrapper">

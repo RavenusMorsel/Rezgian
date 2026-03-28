@@ -58,18 +58,29 @@ async function loadCharacter() {
 function renderEconomyPanel() {
     const coinDisplay = document.getElementById("coin-display");
     const inventoryEl = document.getElementById("inventory-items");
+    const inventoryPanel = document.getElementById("inventory-panel");
+    const inventoryToggle = document.getElementById("inventory-toggle");
     const shopPanel = document.getElementById("shop-panel");
+    const shopToggle = document.getElementById("shop-toggle");
     const shopItemsEl = document.getElementById("shop-items");
 
     if (!economyState) {
         if (coinDisplay) coinDisplay.textContent = "Coins: 0";
         if (inventoryEl) inventoryEl.textContent = "Empty pack";
         if (shopItemsEl) shopItemsEl.textContent = "";
+        if (shopToggle) shopToggle.hidden = true;
+        if (shopPanel) shopPanel.hidden = true;
+        if (inventoryToggle) inventoryToggle.hidden = true;
+        if (inventoryPanel) inventoryPanel.hidden = true;
         return;
     }
 
     if (coinDisplay) {
         coinDisplay.textContent = `Coins: ${economyState.character.currency}`;
+    }
+
+    if (inventoryToggle) {
+        inventoryToggle.hidden = false;
     }
 
     if (inventoryEl) {
@@ -102,9 +113,14 @@ function renderEconomyPanel() {
         shopItemsEl.innerHTML = "";
         const shop = economyState.shop || [];
         if (shop.length === 0) {
+            if (shopToggle) {
+                shopToggle.hidden = true;
+            }
             shopPanel.hidden = true;
         } else {
-            shopPanel.hidden = false;
+            if (shopToggle) {
+                shopToggle.hidden = false;
+            }
             shop.forEach(item => {
                 const row = document.createElement("div");
                 row.className = "shop-item";
@@ -140,10 +156,16 @@ async function fetchEconomyState() {
 
         if (res.status === 404) {
             economyRouteMissing = true;
-            const panel = document.getElementById("economy-panel");
-            if (panel) {
-                panel.hidden = true;
-            }
+            const shopToggle = document.getElementById("shop-toggle");
+            const shopPanel = document.getElementById("shop-panel");
+            const inventoryToggle = document.getElementById("inventory-toggle");
+            const inventoryPanel = document.getElementById("inventory-panel");
+            const coinDisplay = document.getElementById("coin-display");
+            if (shopToggle) shopToggle.hidden = true;
+            if (shopPanel) shopPanel.hidden = true;
+            if (inventoryToggle) inventoryToggle.hidden = true;
+            if (inventoryPanel) inventoryPanel.hidden = true;
+            if (coinDisplay) coinDisplay.hidden = true;
             console.info("Economy API not available yet. Restart/redeploy backend to enable it.");
             return;
         }
@@ -322,6 +344,10 @@ function setActionMode(enabled) {
 function initializeChatControls() {
     const messageInput = document.getElementById("message");
     const actionButton = document.getElementById("action-toggle");
+    const shopToggle = document.getElementById("shop-toggle");
+    const shopPanel = document.getElementById("shop-panel");
+    const inventoryToggle = document.getElementById("inventory-toggle");
+    const inventoryPanel = document.getElementById("inventory-panel");
 
     if (actionButton) {
         actionButton.addEventListener("click", () => {
@@ -335,6 +361,30 @@ function initializeChatControls() {
             if (event.key === "Enter") {
                 event.preventDefault();
                 sendMessage();
+            }
+        });
+    }
+
+    if (shopToggle && shopPanel) {
+        shopToggle.addEventListener("click", () => {
+            const nextHidden = !shopPanel.hidden;
+            shopPanel.hidden = nextHidden;
+            shopToggle.textContent = nextHidden ? "Shop" : "Shop -";
+            if (!nextHidden && inventoryPanel) {
+                inventoryPanel.hidden = true;
+                if (inventoryToggle) inventoryToggle.textContent = "Pack";
+            }
+        });
+    }
+
+    if (inventoryToggle && inventoryPanel) {
+        inventoryToggle.addEventListener("click", () => {
+            const nextHidden = !inventoryPanel.hidden;
+            inventoryPanel.hidden = nextHidden;
+            inventoryToggle.textContent = nextHidden ? "Pack" : "Pack -";
+            if (!nextHidden && shopPanel) {
+                shopPanel.hidden = true;
+                if (shopToggle) shopToggle.textContent = "Shop";
             }
         });
     }
