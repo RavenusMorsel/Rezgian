@@ -116,7 +116,7 @@ function setActionMode(enabled) {
     }
 
     actionButton.classList.toggle("active", enabled);
-    actionButton.textContent = enabled ? "*" : "action";
+    actionButton.textContent = "*";
     actionButton.title = enabled ? "Action mode enabled (/me)" : "Toggle action (/me)";
 }
 
