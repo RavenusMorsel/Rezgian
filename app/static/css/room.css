@@ -78,7 +78,7 @@
 
         #chat-log {
             flex: 1;
-            background: rgba(245, 235, 200, 0.88);
+            background: #f7b15b;
             color: #2c1e0f;
             overflow-y: auto;
             padding: 16px 20px;
@@ -109,7 +109,7 @@
             font-size: 1.1rem;
             border: 1px solid #8a6537;
             border-radius: 6px;
-            background: rgba(255, 245, 220, 0.92);
+            background: #f7b15b;
             color: #2c1e0f;
         }
 
@@ -120,8 +120,8 @@
         button {
             padding: 12px;
             font-size: 1.15rem;
-            background: #614727;
-            color: #f7e8c0;
+            background: #f7b15b;
+            color: #604b13;
             border: none;
             border-radius: 6px;
             cursor: pointer;
