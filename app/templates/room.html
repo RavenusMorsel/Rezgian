@@ -14,6 +14,7 @@
 
         <header>
             <div id="room-title">{{ room.name }}</div>
+            <div id="active-character">Not signed in</div>
         </header>
 
         <div id="chat-wrapper">
@@ -21,7 +22,6 @@
                 <div id="chat-log"></div>
 
                 <div id="chat-inputs">
-                    <input id="username" placeholder="Your name..." autocomplete="off">
                     <input id="message" placeholder="Type your message..." autocomplete="off">
                     <button onclick="sendMessage()">Send</button>
                 </div>

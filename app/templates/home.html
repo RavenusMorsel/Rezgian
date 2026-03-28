@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rezgian - Character Login</title>
+    <link rel="stylesheet" href="/app/static/css/home.css">
+</head>
+<body>
+    <main class="shell">
+        <section class="panel">
+            <h1>Rezgian</h1>
+            <p class="tagline">Create a character, then continue with your token next time.</p>
+
+            <div class="row">
+                <input id="character-name" type="text" maxlength="64" placeholder="Character name">
+                <button id="create-btn" type="button">Create Character</button>
+            </div>
+
+            <div class="row">
+                <button id="continue-btn" type="button">Continue</button>
+                <button id="show-token-btn" type="button">Show Saved Token</button>
+            </div>
+
+            <div class="row token-row">
+                <input id="import-token" type="text" placeholder="Paste token from another device">
+                <button id="import-btn" type="button">Import Token</button>
+            </div>
+
+            <p id="status" aria-live="polite"></p>
+        </section>
+    </main>
+
+    <script src="/app/static/js/home.js"></script>
+</body>
+</html>

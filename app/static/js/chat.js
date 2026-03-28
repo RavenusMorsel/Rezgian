@@ -1,6 +1,54 @@
 // roomId is injected by room.html:
 // <script>const roomId = "{{ room.id }}";</script>
 
+const TOKEN_KEY = "rezgian_character_token";
+let activeCharacter = null;
+
+function getToken() {
+    return localStorage.getItem(TOKEN_KEY);
+}
+
+function authHeaders() {
+    const token = getToken();
+    if (!token) {
+        return { "Content-Type": "application/json" };
+    }
+
+    return {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+    };
+}
+
+async function loadCharacter() {
+    const token = getToken();
+    if (!token) {
+        window.location.href = "/";
+        return;
+    }
+
+    try {
+        const res = await fetch("/api/auth/me", {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) {
+            localStorage.removeItem(TOKEN_KEY);
+            window.location.href = "/";
+            return;
+        }
+
+        const data = await res.json();
+        activeCharacter = data.character;
+
+        const badge = document.getElementById("active-character");
+        if (badge) {
+            badge.textContent = `Character: ${activeCharacter.name}`;
+        }
+    } catch (err) {
+        console.error("Character load error:", err);
+    }
+}
+
 // --- Fetch and render messages ---
 async function fetchMessages() {
     try {
@@ -26,18 +74,16 @@ async function fetchMessages() {
 
 // --- Send a message ---
 async function sendMessage() {
-    const username = document.getElementById("username").value.trim();
     const message = document.getElementById("message").value.trim();
 
-    if (!username || !message) return;
+    if (!activeCharacter || !message) return;
 
     try {
         await fetch("/api/chat/send", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: authHeaders(),
             body: JSON.stringify({
                 room_id: roomId,
-                username: username,
                 message: message
             })
         });
@@ -53,7 +99,7 @@ async function sendMessage() {
 setInterval(fetchMessages, 1000);
 
 // Initial load
-fetchMessages();
+loadCharacter().then(fetchMessages);
 
 
 let audioPlayer = null;

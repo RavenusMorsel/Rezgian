@@ -3,7 +3,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from app.database.base import Base, engine
 from app.database import models as _models
-from app.routes import rooms, chat
+from app.routes import auth, rooms, chat
 
 app = FastAPI()
 
@@ -17,5 +17,7 @@ def startup_event():
     Base.metadata.create_all(bind=engine)
 
 
+app.include_router(auth.page_router)
+app.include_router(auth.api_router, prefix="/api/auth")
 app.include_router(rooms.router)
 app.include_router(chat.router, prefix="/api/chat")
