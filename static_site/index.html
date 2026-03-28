@@ -37,6 +37,72 @@ body {
     overflow: auto;
 }
 
+.panel {
+    width: min(700px, 100%);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.35);
+}
+
+h1 {
+    margin: 0;
+    font-size: clamp(1.6rem, 1vw + 1.3rem, 2.1rem);
+}
+
+.tagline {
+    margin: 8px 0 20px;
+    color: #ead8b3;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+input,
+button {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font: inherit;
+}
+
+input {
+    background: #f7d9a4;
+    color: #36230f;
+    padding: 10px 12px;
+}
+
+button {
+    background: var(--accent);
+    color: #3d2a14;
+    padding: 10px 14px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #d4a86f;
+}
+
+#status {
+    min-height: 1.5em;
+    margin: 6px 0 0;
+    color: #f3d7a8;
+}
+
+@media (max-width: 640px) {
+    .panel {
+        padding: 16px;
+    }
+
+    .row {
+        grid-template-columns: 1fr;
+    }
+}
+
 #Material {
     max-width: 75ch;                 /* better readable line length */
     margin: 0 auto;
@@ -93,16 +159,31 @@ body {
                 A world of stories, characters, and quiet magic.
             </p>
 
-            <p style="text-align:center; margin-top:3em;">
-                <a href="https://rezgian.online/room/tavern"
-                   style="color:#3c2f0f; font-size:1.4em; text-decoration:none; background:#e8c080; padding:0.8em 1.6em; border-radius:12px; box-shadow:0 3px 10px #0004;">
-                    Enter the Tavern →
-                </a>
-            </p>
+        <section class="panel">
+            <h1>Rezgian</h1>
+            <p class="tagline">Create a character, then continue with your token next time.</p>
+
+            <div class="row">
+                <input id="character-name" type="text" maxlength="64" placeholder="Character name">
+                <button id="create-btn" type="button">Create Character</button>
+            </div>
+
+            <div class="row">
+                <button id="continue-btn" type="button">Continue</button>
+                <button id="show-token-btn" type="button">Show Saved Token</button>
+            </div>
+
+            <div class="row token-row">
+                <input id="import-token" type="text" placeholder="Paste token from another device">
+                <button id="import-btn" type="button">Import Token</button>
+            </div>
+
+            <p id="status" aria-live="polite"></p>
+        </section>
 
         </div>
     </div>
 </div>
-
+<script src="/app/static/js/home.js"></script>
 </body>
 </html>
