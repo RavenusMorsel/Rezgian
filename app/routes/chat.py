@@ -84,6 +84,7 @@ async def websocket_chat(
                 if char:
                     char.last_room_id = room_id
                     char.message_count += 1
+                    char.currency += 1
                 db.commit()
             finally:
                 db.close()
@@ -119,6 +120,7 @@ def send_message(
     db.add(saved_message)
     character.last_room_id = msg.room_id
     character.message_count += 1
+    character.currency += 1
     db.commit()
     return {"status": "ok"}
 

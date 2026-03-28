@@ -123,6 +123,105 @@
             white-space: nowrap;
         }
 
+        #economy-panel {
+            position: absolute;
+            left: 10px;
+            top: 52%;
+            transform: translateY(-50%);
+            z-index: 24;
+            width: 215px;
+            background: rgba(36, 23, 10, 0.74);
+            border: 1px solid rgba(196, 152, 88, 0.48);
+            border-radius: 8px;
+            box-shadow: -2px 4px 10px rgba(0, 0, 0, 0.45);
+            padding: 8px;
+            color: #f0ddbb;
+            font-size: 0.84rem;
+        }
+
+        #coin-display {
+            font-weight: bold;
+            color: #ffdd85;
+            margin-bottom: 8px;
+        }
+
+        .econ-title {
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            font-size: 0.67rem;
+            margin-bottom: 6px;
+            color: #d9bf8d;
+        }
+
+        #shop-panel,
+        #inventory-panel {
+            margin-bottom: 8px;
+        }
+
+        #shop-panel[hidden] {
+            display: none;
+        }
+
+        .shop-item,
+        .inventory-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            margin-bottom: 4px;
+            padding: 4px 5px;
+            border: 1px solid rgba(185, 140, 74, 0.35);
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.14);
+        }
+
+        .shop-item:last-child,
+        .inventory-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-meta {
+            min-width: 0;
+        }
+
+        .item-name {
+            display: block;
+            color: #f2debb;
+            font-size: 0.82rem;
+        }
+
+        .item-sub {
+            display: block;
+            color: #c6ac7f;
+            font-size: 0.69rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 130px;
+        }
+
+        .econ-btn {
+            border: 1px solid #8a6537;
+            background: #f7b15b;
+            color: #4f3518;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            line-height: 1;
+            padding: 4px 7px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .econ-btn:hover {
+            background: #8a6537;
+            color: #f7e8c0;
+        }
+
+        .econ-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
         #chat-wrapper {
             flex: 1;
             overflow: hidden;               /* important: contains the scroll */
@@ -311,6 +410,13 @@
                 flex-wrap: wrap;
                 justify-content: center;
                 gap: 8px;
+            }
+
+            #economy-panel {
+                position: static;
+                transform: none;
+                width: auto;
+                margin: 6px 12px 0;
             }
 
             #exits-title {

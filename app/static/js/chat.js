@@ -4,9 +4,17 @@ const TOKEN_KEY = "rezgian_character_token";
 let activeCharacter = null;
 let actionModeEnabled = false;
 let chatSocket = null;
+let economyState = null;
 
 function getToken() {
     return localStorage.getItem(TOKEN_KEY);
+}
+
+function authHeaders() {
+    return {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`
+    };
 }
 
 // ---------------------------------------------------------------------------
@@ -39,6 +47,130 @@ async function loadCharacter() {
         }
     } catch (err) {
         console.error("Character load error:", err);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Economy
+// ---------------------------------------------------------------------------
+
+function renderEconomyPanel() {
+    const coinDisplay = document.getElementById("coin-display");
+    const inventoryEl = document.getElementById("inventory-items");
+    const shopPanel = document.getElementById("shop-panel");
+    const shopItemsEl = document.getElementById("shop-items");
+
+    if (!economyState) {
+        if (coinDisplay) coinDisplay.textContent = "Coins: 0";
+        if (inventoryEl) inventoryEl.textContent = "Empty pack";
+        if (shopItemsEl) shopItemsEl.textContent = "";
+        return;
+    }
+
+    if (coinDisplay) {
+        coinDisplay.textContent = `Coins: ${economyState.character.currency}`;
+    }
+
+    if (inventoryEl) {
+        inventoryEl.innerHTML = "";
+        if (!economyState.inventory || economyState.inventory.length === 0) {
+            inventoryEl.textContent = "Empty pack";
+        } else {
+            economyState.inventory.forEach(item => {
+                const row = document.createElement("div");
+                row.className = "inventory-item";
+
+                const meta = document.createElement("div");
+                meta.className = "item-meta";
+                meta.innerHTML = `<span class="item-name">${item.name}</span><span class="item-sub">x${item.quantity}</span>`;
+
+                const sellBtn = document.createElement("button");
+                sellBtn.className = "econ-btn";
+                sellBtn.type = "button";
+                sellBtn.textContent = `Sell +${Math.max(1, Math.floor((item.base_price || 0) / 2))}`;
+                sellBtn.onclick = () => sellItem(item.item_id, 1);
+
+                row.appendChild(meta);
+                row.appendChild(sellBtn);
+                inventoryEl.appendChild(row);
+            });
+        }
+    }
+
+    if (shopItemsEl && shopPanel) {
+        shopItemsEl.innerHTML = "";
+        const shop = economyState.shop || [];
+        if (shop.length === 0) {
+            shopPanel.hidden = true;
+        } else {
+            shopPanel.hidden = false;
+            shop.forEach(item => {
+                const row = document.createElement("div");
+                row.className = "shop-item";
+
+                const meta = document.createElement("div");
+                meta.className = "item-meta";
+                meta.innerHTML = `<span class="item-name">${item.name}</span><span class="item-sub">${item.price} coins</span>`;
+
+                const buyBtn = document.createElement("button");
+                buyBtn.className = "econ-btn";
+                buyBtn.type = "button";
+                buyBtn.textContent = "Buy";
+                buyBtn.disabled = economyState.character.currency < item.price;
+                buyBtn.onclick = () => buyItem(item.item_id, 1);
+
+                row.appendChild(meta);
+                row.appendChild(buyBtn);
+                shopItemsEl.appendChild(row);
+            });
+        }
+    }
+}
+
+async function fetchEconomyState() {
+    try {
+        const res = await fetch(`/api/economy/state?room_id=${encodeURIComponent(roomId)}`, {
+            headers: { Authorization: `Bearer ${getToken()}` }
+        });
+        if (!res.ok) return;
+        economyState = await res.json();
+        renderEconomyPanel();
+    } catch (err) {
+        console.error("Economy fetch error:", err);
+    }
+}
+
+async function buyItem(itemId, quantity) {
+    try {
+        const res = await fetch("/api/economy/buy", {
+            method: "POST",
+            headers: authHeaders(),
+            body: JSON.stringify({ room_id: roomId, item_id: itemId, quantity })
+        });
+        if (!res.ok) {
+            const data = await res.json().catch(() => null);
+            throw new Error(data?.detail || `Buy failed (${res.status})`);
+        }
+        await fetchEconomyState();
+    } catch (err) {
+        console.error("Buy error:", err);
+    }
+}
+
+async function sellItem(itemId, quantity) {
+    try {
+        const res = await fetch("/api/economy/sell", {
+            method: "POST",
+            headers: authHeaders(),
+            body: JSON.stringify({ item_id: itemId, quantity })
+        });
+        if (!res.ok) {
+            const data = await res.json().catch(() => null);
+            throw new Error(data?.detail || `Sell failed (${res.status})`);
+        }
+        await fetchEconomyState();
+    } catch (err) {
+        console.error("Sell error:", err);
     }
 }
 
@@ -95,6 +227,7 @@ function openSocket() {
     chatSocket.onmessage = (event) => {
         const data = JSON.parse(event.data);
         appendMessage(data.username, data.message);
+        fetchEconomyState();
     };
 
     chatSocket.onclose = (event) => {
@@ -151,6 +284,9 @@ function sendMessage() {
         })
         .catch((err) => {
             console.error("Send fallback error:", err);
+        })
+        .finally(() => {
+            fetchEconomyState();
         });
 }
 
@@ -197,6 +333,7 @@ function initializeChatControls() {
 (async () => {
     await loadCharacter();
     await fetchHistory();
+    await fetchEconomyState();
     openSocket();
     initializeChatControls();
 })();
