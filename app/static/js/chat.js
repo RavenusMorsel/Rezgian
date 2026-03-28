@@ -121,11 +121,37 @@ function sendMessage() {
     const message = messageInput.value.trim();
 
     if (!activeCharacter || !message) return;
-    if (!chatSocket || chatSocket.readyState !== WebSocket.OPEN) return;
 
     const messageToSend = actionModeEnabled ? `/me ${message}` : message;
-    chatSocket.send(messageToSend);
-    messageInput.value = "";
+
+    if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+        chatSocket.send(messageToSend);
+        messageInput.value = "";
+        return;
+    }
+
+    // Fallback for startup/reconnect windows where WebSocket is not yet open.
+    fetch("/api/chat/send", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getToken()}`
+        },
+        body: JSON.stringify({
+            room_id: roomId,
+            message: messageToSend
+        })
+    })
+        .then((res) => {
+            if (!res.ok) {
+                throw new Error(`HTTP send failed: ${res.status}`);
+            }
+            messageInput.value = "";
+            return fetchHistory();
+        })
+        .catch((err) => {
+            console.error("Send fallback error:", err);
+        });
 }
 
 // ---------------------------------------------------------------------------
@@ -174,10 +200,6 @@ function initializeChatControls() {
     openSocket();
     initializeChatControls();
 })();
-
-// Initial load
-initializeChatControls();
-loadCharacter().then(fetchMessages);
 
 
 let audioPlayer = null;
