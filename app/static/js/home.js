@@ -1,5 +1,19 @@
 const TOKEN_KEY = "rezgian_character_token";
 
+function setSectionVisibility(elementId, isVisible) {
+    const element = document.getElementById(elementId);
+    if (!element) {
+        return;
+    }
+
+    element.style.display = isVisible ? "" : "none";
+}
+
+function setLoggedInUI(hasToken) {
+    setSectionVisibility("create-section", !hasToken);
+    setSectionVisibility("import-section", !hasToken);
+}
+
 function setStatus(message, isError = false) {
     const status = document.getElementById("status");
     status.textContent = message;
@@ -49,6 +63,7 @@ async function createCharacter() {
 async function continueCharacter() {
     const token = getToken();
     if (!token) {
+        setLoggedInUI(false);
         setStatus("No saved token found in this browser.", true);
         return;
     }
@@ -61,6 +76,8 @@ async function continueCharacter() {
         });
         const data = await res.json();
         if (!res.ok) {
+            localStorage.removeItem(TOKEN_KEY);
+            setLoggedInUI(false);
             setStatus(data.detail || "Saved token is invalid.", true);
             return;
         }
@@ -110,7 +127,17 @@ function showToken() {
     setStatus(`Saved token: ${token}`);
 }
 
+function initializeTokenUI() {
+    const hasToken = Boolean(getToken());
+    setLoggedInUI(hasToken);
+
+    if (hasToken) {
+        setStatus("Saved token found. Press Continue to log back in.");
+    }
+}
+
 document.getElementById("create-btn").addEventListener("click", createCharacter);
 document.getElementById("continue-btn").addEventListener("click", continueCharacter);
 document.getElementById("import-btn").addEventListener("click", importToken);
 document.getElementById("show-token-btn").addEventListener("click", showToken);
+initializeTokenUI();

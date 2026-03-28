@@ -4,149 +4,7 @@
 <meta charset="UTF-8">
 <title>Rezgian</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-    :root {
-    --bg: #221507;
-    --panel: rgba(36, 25, 14, 0.9);
-    --line: #8a6537;
-    --ink: #f6e6c7;
-    --accent: #e5bf88;
-}
-body {
-    margin: 0;
-    height: 100vh;
-    overflow: hidden;
-    background: #ffffff;
-    font-family: 'Georgia', serif;
-}
-
-#container {
-    position: fixed;
-    inset: 3vh;               /* top,right,bottom,left */
-    border-left: min(2.5vh, 18px) solid #614727;
-    border-top:  min(2.5vh, 18px) solid #8a6537;
-    border-right: min(2.5vh, 18px) solid #614727;
-    border-bottom: min(2.5vh, 18px) solid #8a6537;
-    box-shadow: -1vh 1vh 15px rgb(0, 0, 0);
-    overflow: hidden;
-}
-
-#Main {
-    background: #f7b15b;
-    height: 100%;
-    border:  min(2.5vh, 18px) solid transparent;
-    border-image-source: url("https://i.imgur.com/180H0IG.png");
-    border-image-slice: 14;          /* ← try 20–30 */
-    border-image-repeat: stretch;
-    padding: 5vmin;                  /* responsive padding */
-    box-sizing: border-box;
-    overflow: auto;
-}
-
-.panel {
-    width: min(700px, 100%);
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 24px;
-    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.35);
-}
-
-h1 {
-    margin: 0;
-    font-size: clamp(1.6rem, 1vw + 1.3rem, 2.1rem);
-}
-
-.tagline {
-    margin: 8px 0 20px;
-    color: #ead8b3;
-}
-
-.row {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-input,
-button {
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    font: inherit;
-}
-
-input {
-    background: #f7d9a4;
-    color: #36230f;
-    padding: 10px 12px;
-}
-
-button {
-    background: var(--accent);
-    color: #3d2a14;
-    padding: 10px 14px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #d4a86f;
-}
-
-#status {
-    min-height: 1.5em;
-    margin: 6px 0 0;
-    color: #f3d7a8;
-}
-
-@media (max-width: 640px) {
-    .panel {
-        padding: 16px;
-    }
-
-    .row {
-        grid-template-columns: 1fr;
-    }
-}
-
-#Material {
-    max-width: 75ch;                 /* better readable line length */
-    margin: 0 auto;
-    border: 2.5vh solid transparent;
-    border-image-source: url("https://i.imgur.com/R5LcgFz.png");
-    border-image-slice: 14;          /* ← adjust if needed */
-    border-image-repeat: stretch;
-    padding: 4vmin;
-    color: #4f4012;
-    font-size: clamp(1rem, 0.35vw + 0.92rem, 1.1rem);
-    line-height: 1.55;
-    text-shadow: 0 1px 2px #0004;
-}
-
-#Material img {
-    display: block;
-    width: 100%;
-    height: auto;
-    margin-bottom: 1.5em;
-}
-
-@media (max-width: 768px) {
-    #container {
-        inset: 1.5vh;
-    }
-
-    #Main {
-        padding: 3.2vmin;
-    }
-
-    #Material {
-        border-width: min(2vh, 14px);
-        padding: 3.5vmin;
-        font-size: clamp(0.95rem, 2.9vw, 1.02rem);
-    }
-}
-</style>
+<link rel="stylesheet" href="/app/static/css/index.css">
 </head>
 <body>
 
@@ -154,23 +12,23 @@ button:hover {
     <div id="Main">
         <div id="Material">
 
-            <img src="download.png" alt="Tavern interior or cozy fantasy scene">
+            <img class="hero-image" src="download.png" alt="Tavern interior or cozy fantasy scene">
 
-            <h1 style="margin-top:0; text-align:center; color:#4a2f0d; text-shadow:0 2px 4px #0006;">
+            <h1 class="hero-title">
                 Welcome to Rezgian
             </h1>
 
-            <p style="text-align:center; font-size:1.2em;">
+            <p class="hero-copy">
                 A cozy tavern where adventurers gather to share tales<br>
                 and embark on quests.<br>
                 A world of stories, characters, and quiet magic.
             </p>
 
         <section class="panel">
-            <h1>Rezgian</h1>
+            <h2 class="auth-title">Rezgian</h2>
             <p class="tagline">Create a character, then continue with your token next time.</p>
 
-            <div class="row">
+            <div id="create-section" class="row">
                 <input id="character-name" type="text" maxlength="64" placeholder="Character name">
                 <button id="create-btn" type="button">Create Character</button>
             </div>
@@ -180,7 +38,7 @@ button:hover {
                 <button id="show-token-btn" type="button">Show Saved Token</button>
             </div>
 
-            <div class="row token-row">
+            <div id="import-section" class="row token-row">
                 <input id="import-token" type="text" placeholder="Paste token from another device">
                 <button id="import-btn" type="button">Import Token</button>
             </div>
