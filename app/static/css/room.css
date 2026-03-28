@@ -46,19 +46,15 @@
 
         #exits-panel {
             position: absolute;
-            right: 10px;
+            right: 0px;
             top: 52%;
             transform: translateY(-50%);
             z-index: 25;
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            padding: 8px;
+            gap: 12px;
             min-width: 120px;
-            background: rgba(36, 23, 10, 0.76);
-            border: 1px solid rgba(138, 101, 55, 0.75);
-            border-radius: 10px;
-            backdrop-filter: blur(3px);
+            background: rgba(36, 23, 10, 0);
         }
 
         #exits-title {
@@ -74,10 +70,11 @@
             display: block;
             text-align: center;
             text-decoration: none;
-            font-size: 0.84rem;
+            font-size: 1rem;
             color: #f9ebcc;
-            background: rgba(138, 101, 55, 0.92);
-            border: 1px solid rgba(201, 165, 116, 0.72);
+            background: #f7b15b;
+            border: 8px solid none solid solid transparent;
+            border-image: linear-gradient(45deg, #4e3517, #8a6537) 1 100%;
             border-radius: 7px;
             padding: 5px 8px;
             transition: background 0.15s;
