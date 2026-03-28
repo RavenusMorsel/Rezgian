@@ -1,5 +1,13 @@
 const TOKEN_KEY = "rezgian_character_token";
 
+function getTokenModalElements() {
+    return {
+        modal: document.getElementById("token-modal"),
+        qr: document.getElementById("token-qr"),
+        output: document.getElementById("token-output")
+    };
+}
+
 function setSectionVisibility(elementId, isVisible) {
     const element = document.getElementById(elementId);
     if (!element) {
@@ -31,6 +39,71 @@ function getToken() {
 function redirectToLastRoom(character) {
     const room = character.last_room_id || "tavern";
     window.location.href = `/room/${room}`;
+}
+
+async function renderTokenQr(token) {
+    const { qr } = getTokenModalElements();
+    if (!qr) {
+        return;
+    }
+
+    qr.innerHTML = "";
+
+    if (!window.QRCode || typeof window.QRCode.toCanvas !== "function") {
+        qr.textContent = "QR generator unavailable.";
+        return;
+    }
+
+    const canvas = document.createElement("canvas");
+    qr.appendChild(canvas);
+
+    try {
+        await window.QRCode.toCanvas(canvas, token, {
+            width: 220,
+            margin: 2,
+            color: {
+                dark: "#2c1808",
+                light: "#f7ebd6"
+            }
+        });
+    } catch (error) {
+        qr.textContent = "Could not generate QR code.";
+    }
+}
+
+async function openTokenModal(token) {
+    const { modal, output } = getTokenModalElements();
+    if (!modal || !output) {
+        return;
+    }
+
+    output.value = token;
+    modal.hidden = false;
+    await renderTokenQr(token);
+}
+
+function closeTokenModal() {
+    const { modal } = getTokenModalElements();
+    if (modal) {
+        modal.hidden = true;
+    }
+}
+
+async function copyTokenFromModal() {
+    const { output } = getTokenModalElements();
+    if (!output || !output.value) {
+        setStatus("No token available to copy.", true);
+        return;
+    }
+
+    try {
+        await navigator.clipboard.writeText(output.value);
+        setStatus("Token copied. Scan the QR or paste the text on your mobile device.");
+    } catch (error) {
+        output.focus();
+        output.select();
+        setStatus("Could not copy automatically. The token is selected for manual copy.", true);
+    }
 }
 
 async function createCharacter() {
@@ -124,7 +197,8 @@ function showToken() {
         return;
     }
 
-    setStatus(`Saved token: ${token}`);
+    openTokenModal(token);
+    setStatus("Export panel opened. Scan the QR code or copy the token text.");
 }
 
 function initializeTokenUI() {
@@ -140,4 +214,17 @@ document.getElementById("create-btn").addEventListener("click", createCharacter)
 document.getElementById("continue-btn").addEventListener("click", continueCharacter);
 document.getElementById("import-btn").addEventListener("click", importToken);
 document.getElementById("show-token-btn").addEventListener("click", showToken);
+document.getElementById("copy-token-btn").addEventListener("click", copyTokenFromModal);
+document.getElementById("close-token-btn").addEventListener("click", closeTokenModal);
+document.getElementById("close-token-modal").addEventListener("click", closeTokenModal);
+document.getElementById("token-modal").addEventListener("click", (event) => {
+    if (event.target && event.target.id === "token-modal") {
+        closeTokenModal();
+    }
+});
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+        closeTokenModal();
+    }
+});
 initializeTokenUI();

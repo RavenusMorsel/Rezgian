@@ -19,7 +19,7 @@
 
             <div class="row">
                 <button id="continue-btn" type="button">Continue</button>
-                <button id="show-token-btn" type="button">Show Saved Token</button>
+                <button id="show-token-btn" type="button">Export Character</button>
             </div>
 
             <div id="import-section" class="row token-row">
@@ -31,6 +31,24 @@
         </section>
     </main>
 
+    <div id="token-modal" class="token-modal" hidden>
+        <div class="token-card" role="dialog" aria-modal="true" aria-labelledby="token-modal-title">
+            <div class="token-card-header">
+                <h2 id="token-modal-title">Character Export</h2>
+                <button id="close-token-modal" type="button" class="token-close" aria-label="Close export panel">x</button>
+            </div>
+            <p class="token-help">Scan this QR code on mobile or copy the token text below.</p>
+            <div id="token-qr" class="token-qr" aria-label="Character token QR code"></div>
+            <label class="token-label" for="token-output">Character token</label>
+            <textarea id="token-output" readonly spellcheck="false"></textarea>
+            <div class="row token-actions">
+                <button id="copy-token-btn" type="button">Copy Token</button>
+                <button id="close-token-btn" type="button">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
     <script src="/app/static/js/home.js"></script>
 </body>
 </html>
