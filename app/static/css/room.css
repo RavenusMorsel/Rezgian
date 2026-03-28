@@ -116,7 +116,7 @@
 
         #chat-log > div {
             padding: 2px 2px;
-            margin-bottom: 6px;
+            margin-bottom: 1px;
             border: 1px solid rgba(96, 68, 31, 0.35);
             border-radius: 4px;
             background: rgba(0, 0, 0, 0.104);
