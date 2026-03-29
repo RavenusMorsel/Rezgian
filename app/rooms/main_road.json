@@ -1,0 +1,11 @@
+{
+    "id": "main_road",
+    "name": "Main Road",
+    "background": "/app/static/bg/6BmABRQbSOO6Cy1gZtlDlQ.webp",
+    "description": "A broader trade road cut through the woods, marked by wagon ruts and old signposts.",
+    "exits": {
+        "forest_path": "forest_path"
+    },
+    "npcs": [],
+    "audio": ["/app/static/audio/StreetAmbience.ogg"]
+}

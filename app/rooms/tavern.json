@@ -5,7 +5,7 @@
     "logbg": "#cc7b7b70",
     "description": "A warm tavern filled with chatter and the smell of roasted meat.",
     "exits": {
-        "street": "street",
+        "forest_path": "forest_path",
         "cellar": "cellar"
     },
     "npcs": ["barkeep", "traveler"],

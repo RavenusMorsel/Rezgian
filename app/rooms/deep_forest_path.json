@@ -1,0 +1,11 @@
+{
+    "id": "deep_forest_path",
+    "name": "Deep Forest Path",
+    "background": "/app/static/bg/6BmABRQbSOO6Cy1gZtlDlQ.webp",
+    "description": "The canopy thickens and the path narrows, with roots and moss underfoot.",
+    "exits": {
+        "forest_path": "forest_path"
+    },
+    "npcs": [],
+    "audio": ["/app/static/audio/StreetAmbience.ogg"]
+}
