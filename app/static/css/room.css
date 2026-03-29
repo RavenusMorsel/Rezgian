@@ -32,11 +32,11 @@
         #Main {
             flex: 1;
             background: #f7b15b;
-                        border: min(2.5vh, 18px) solid transparent;
-          border-image-source: url("https://i.imgur.com/180H0IG.png");
+            border: min(2.5vh, 18px) solid transparent;
+            border-image-source: url("https://i.imgur.com/180H0IG.png");
             border-image-slice: 14;
             border-image-repeat: stretch;
-            padding: 0;                    /* removed padding here — moved to inner elements */
+            padding: 0;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -150,14 +150,21 @@
             text-overflow: ellipsis;
         }
 
+        #active-character,
+        #coin-display,
+        #health-display {
+            border-radius: 999px;
+            padding: 3px 8px;
+            font-size: clamp(0.74rem, 0.12vw + 0.7rem, 0.84rem);
+            white-space: nowrap;
+            font-weight: bold;
+        }
+
         #active-character {
-            font-size: clamp(0.72rem, 0.12vw + 0.7rem, 0.82rem);
             color: #f5deb4;
             background: rgba(96, 68, 31, 0.65);
             border: 1px solid rgba(181, 132, 72, 0.7);
-            border-radius: 999px;
-            padding: 3px 7px;
-            white-space: nowrap;
+            font-weight: normal;
         }
 
         .icon-toggle {
@@ -176,25 +183,15 @@
         }
 
         #coin-display {
-            font-size: clamp(0.74rem, 0.12vw + 0.7rem, 0.84rem);
             color: #ffdd85;
             background: rgba(96, 68, 31, 0.65);
             border: 1px solid rgba(181, 132, 72, 0.7);
-            border-radius: 999px;
-            padding: 3px 8px;
-            font-weight: bold;
-            white-space: nowrap;
         }
 
         #health-display {
-            font-size: clamp(0.74rem, 0.12vw + 0.7rem, 0.84rem);
             color: #f3d8d8;
             background: rgba(96, 42, 31, 0.75);
             border: 1px solid rgba(181, 92, 72, 0.7);
-            border-radius: 999px;
-            padding: 3px 8px;
-            font-weight: bold;
-            white-space: nowrap;
         }
 
         #combat-panel {
@@ -424,7 +421,7 @@
 
         #chat-wrapper {
             flex: 1;
-            overflow: hidden;               /* important: contains the scroll */
+            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
@@ -620,12 +617,12 @@
 
             #header-left {
                 order: 2;
-                justify-content: flex-start;
+                align-items: flex-start;
             }
 
             #header-right {
                 order: 3;
-                justify-content: flex-end;
+                align-items: flex-end;
             }
 
             #chat-log {
