@@ -90,6 +90,7 @@
         header {
             position: sticky;
             top: 0;
+            gap: 5px;
             z-index: 20;
             height: 10vh;
             min-height: 70px;
