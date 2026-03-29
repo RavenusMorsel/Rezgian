@@ -59,17 +59,21 @@
 
         <footer>
 
+            {% if room.id == "cellar" %}
             <section id="combat-panel" aria-label="Combat controls" hidden>
                 <div id="enemy-display">No active encounter</div>
                 <div id="combat-log" aria-live="polite"></div>
             </section>
+            {% endif %}
             <div id="footer-controls">
+                {% if room.id == "cellar" %}
                 <div class="combat-actions" hidden>
                 <button id="engage-btn" type="button">Engage</button>
                 <button id="attack-btn" type="button">Attack</button>
                 <button id="flee-btn" type="button">Flee</button>
                 <button id="use-herb-btn" type="button">Use Herb</button>
             </div>
+                {% endif %}
                 <button id="inventory-toggle" type="button" class="pullout-toggle">Pack</button>
                 <button id="ambience-toggle">♪</button>
             </div>

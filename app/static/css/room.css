@@ -191,6 +191,11 @@
             margin-bottom: 6px;
         }
 
+        #combat-panel[hidden],
+        .combat-actions[hidden] {
+            display: none !important;
+        }
+
         .combat-actions button {
             border: 1px solid #8a6537;
             background: #f7b15b;
