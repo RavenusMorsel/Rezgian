@@ -91,7 +91,6 @@
             position: sticky;
             top: 0;
             z-index: 20;
-            min-height: 84px;
             background: rgba(30, 20, 10, 0.75);
             backdrop-filter: blur(4px);
             display: grid;
