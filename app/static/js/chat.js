@@ -6,6 +6,26 @@ let actionModeEnabled = false;
 let chatSocket = null;
 let economyState = null;
 let economyRouteMissing = false;
+let combatState = null;
+
+function setCombatLog(text, isError = false) {
+    const combatLog = document.getElementById("combat-log");
+    if (!combatLog) return;
+    combatLog.textContent = text;
+    combatLog.style.color = isError ? "#f0a7a0" : "#d7be90";
+}
+
+function renderVitals(vitals) {
+    const healthDisplay = document.getElementById("health-display");
+    if (!healthDisplay) return;
+
+    if (!vitals) {
+        healthDisplay.textContent = "HP: 0/0";
+        return;
+    }
+
+    healthDisplay.textContent = `HP: ${vitals.health}/${vitals.max_health}`;
+}
 
 function closeShopPanel() {
     const shopPanel = document.getElementById("shop-panel");
@@ -75,6 +95,7 @@ async function loadCharacter() {
 
 function renderEconomyPanel() {
     const coinDisplay = document.getElementById("coin-display");
+    const healthDisplay = document.getElementById("health-display");
     const inventoryEl = document.getElementById("inventory-items");
     const inventoryPanel = document.getElementById("inventory-panel");
     const inventoryToggle = document.getElementById("inventory-toggle");
@@ -84,6 +105,7 @@ function renderEconomyPanel() {
 
     if (!economyState) {
         if (coinDisplay) coinDisplay.textContent = "Coins: 0";
+        if (healthDisplay) healthDisplay.textContent = "HP: 0/0";
         if (inventoryEl) inventoryEl.textContent = "Empty pack";
         if (shopItemsEl) shopItemsEl.textContent = "";
         if (shopToggle) shopToggle.hidden = true;
@@ -96,6 +118,7 @@ function renderEconomyPanel() {
     if (coinDisplay) {
         coinDisplay.textContent = `Coins: ${economyState.character.currency}`;
     }
+    renderVitals(economyState.vitals);
 
     if (inventoryToggle) {
         inventoryToggle.hidden = false;
@@ -120,8 +143,22 @@ function renderEconomyPanel() {
                 sellBtn.textContent = `Sell +${Math.max(1, Math.floor((item.base_price || 0) / 2))}`;
                 sellBtn.onclick = () => sellItem(item.item_id, 1);
 
+                const actions = document.createElement("div");
+                actions.className = "item-actions";
+
+                if (item.usable) {
+                    const useBtn = document.createElement("button");
+                    useBtn.className = "econ-btn";
+                    useBtn.type = "button";
+                    useBtn.textContent = "Use";
+                    useBtn.onclick = () => useItem(item.item_id, 1);
+                    actions.appendChild(useBtn);
+                }
+
+                actions.appendChild(sellBtn);
+
                 row.appendChild(meta);
-                row.appendChild(sellBtn);
+                row.appendChild(actions);
                 inventoryEl.appendChild(row);
             });
         }
@@ -211,6 +248,7 @@ async function buyItem(itemId, quantity) {
         await fetchEconomyState();
     } catch (err) {
         console.error("Buy error:", err);
+        setCombatLog(`Shop error: ${err.message}`, true);
     }
 }
 
@@ -228,7 +266,133 @@ async function sellItem(itemId, quantity) {
         await fetchEconomyState();
     } catch (err) {
         console.error("Sell error:", err);
+        setCombatLog(`Sell error: ${err.message}`, true);
     }
+}
+
+async function useItem(itemId, quantity) {
+    try {
+        const res = await fetch("/api/economy/use", {
+            method: "POST",
+            headers: authHeaders(),
+            body: JSON.stringify({ item_id: itemId, quantity })
+        });
+        if (!res.ok) {
+            const data = await res.json().catch(() => null);
+            throw new Error(data?.detail || `Use failed (${res.status})`);
+        }
+        const data = await res.json();
+        setCombatLog(`Used ${quantity} ${itemId.replaceAll("_", " ")}. Healed ${data.effects.healed}.`);
+        await fetchEconomyState();
+        await fetchCombatState();
+    } catch (err) {
+        console.error("Use item error:", err);
+        setCombatLog(`Use error: ${err.message}`, true);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Combat
+// ---------------------------------------------------------------------------
+
+function renderCombatState() {
+    const enemyDisplay = document.getElementById("enemy-display");
+    if (!enemyDisplay) return;
+
+    if (!combatState || !combatState.encounter) {
+        enemyDisplay.textContent = "No active encounter";
+        return;
+    }
+
+    const e = combatState.encounter;
+    enemyDisplay.textContent = `${e.enemy_name}: ${e.enemy_health}/${e.enemy_max_health} HP`;
+}
+
+async function fetchCombatState() {
+    try {
+        const res = await fetch(`/api/combat/state?room_id=${encodeURIComponent(roomId)}`, {
+            headers: { Authorization: `Bearer ${getToken()}` }
+        });
+        if (!res.ok) return;
+        combatState = await res.json();
+        renderVitals(combatState.vitals);
+        renderCombatState();
+    } catch (err) {
+        console.error("Combat state error:", err);
+    }
+}
+
+async function engageCombat() {
+    try {
+        const res = await fetch("/api/combat/engage", {
+            method: "POST",
+            headers: authHeaders(),
+            body: JSON.stringify({ room_id: roomId })
+        });
+        if (!res.ok) {
+            const data = await res.json().catch(() => null);
+            throw new Error(data?.detail || `Engage failed (${res.status})`);
+        }
+        combatState = await res.json();
+        renderVitals(combatState.vitals);
+        renderCombatState();
+        setCombatLog(`Encountered ${combatState.encounter.enemy_name}.`);
+    } catch (err) {
+        setCombatLog(`Engage error: ${err.message}`, true);
+    }
+}
+
+async function attackCombat() {
+    try {
+        const res = await fetch("/api/combat/attack", {
+            method: "POST",
+            headers: authHeaders(),
+            body: JSON.stringify({ room_id: roomId })
+        });
+        if (!res.ok) {
+            const data = await res.json().catch(() => null);
+            throw new Error(data?.detail || `Attack failed (${res.status})`);
+        }
+        const data = await res.json();
+        combatState = {
+            vitals: data.vitals,
+            encounter: data.encounter
+        };
+        renderVitals(data.vitals);
+        renderCombatState();
+        if (data.log && data.log.length > 0) {
+            setCombatLog(data.log.join(" "));
+        }
+        await fetchEconomyState();
+    } catch (err) {
+        setCombatLog(`Attack error: ${err.message}`, true);
+    }
+}
+
+async function fleeCombat() {
+    try {
+        const res = await fetch("/api/combat/flee", {
+            method: "POST",
+            headers: authHeaders(),
+            body: JSON.stringify({ room_id: roomId })
+        });
+        if (!res.ok) {
+            const data = await res.json().catch(() => null);
+            throw new Error(data?.detail || `Flee failed (${res.status})`);
+        }
+        combatState = {
+            vitals: combatState?.vitals || economyState?.vitals || null,
+            encounter: null
+        };
+        renderCombatState();
+        setCombatLog("You disengage and step back.");
+    } catch (err) {
+        setCombatLog(`Flee error: ${err.message}`, true);
+    }
+}
+
+function useHealingHerb() {
+    useItem("healing_herb", 1);
 }
 
 // ---------------------------------------------------------------------------
@@ -373,6 +537,10 @@ function initializeChatControls() {
     const shopClose = document.getElementById("shop-close");
     const inventoryToggle = document.getElementById("inventory-toggle");
     const inventoryPanel = document.getElementById("inventory-panel");
+    const engageButton = document.getElementById("engage-btn");
+    const attackButton = document.getElementById("attack-btn");
+    const fleeButton = document.getElementById("flee-btn");
+    const useHerbButton = document.getElementById("use-herb-btn");
 
     if (actionButton) {
         actionButton.addEventListener("click", () => {
@@ -417,6 +585,22 @@ function initializeChatControls() {
         });
     }
 
+    if (engageButton) {
+        engageButton.addEventListener("click", engageCombat);
+    }
+
+    if (attackButton) {
+        attackButton.addEventListener("click", attackCombat);
+    }
+
+    if (fleeButton) {
+        fleeButton.addEventListener("click", fleeCombat);
+    }
+
+    if (useHerbButton) {
+        useHerbButton.addEventListener("click", useHealingHerb);
+    }
+
     document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
             closeShopPanel();
@@ -434,6 +618,7 @@ function initializeChatControls() {
     await loadCharacter();
     await fetchHistory();
     await fetchEconomyState();
+    await fetchCombatState();
     openSocket();
     initializeChatControls();
 })();

@@ -2,10 +2,10 @@
     "id": "cellar",
     "name": "Cellar",
     "background": "/static/bg/cellar.png",
-    "description": "A dimly lit cellar with stone walls and a musty smell. The stairs lead up to the tavern .",
+    "description": "A dim cellar of damp stone and moldy crates. A skittering rat watches from the shadows while the stairs lead up to the tavern.",
     "exits": {
         "tavern": "tavern"
     },
-    "npcs": [],
+    "npcs": ["cellar_rat"],
     "audio": ["/app/static/audio/StreetAmbience.ogg"]
 }

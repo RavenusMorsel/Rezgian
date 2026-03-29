@@ -24,9 +24,21 @@
             <div id="character-meta">
                 <div id="active-character">Not signed in</div>
                 <div id="coin-display">Coins: 0</div>
+                <div id="health-display">HP: 0/0</div>
                 <button id="shop-toggle-header" type="button" class="icon-toggle" hidden title="Open tavern counter">🍺</button>
             </div>
         </header>
+
+        <section id="combat-panel" aria-label="Combat controls">
+            <div id="enemy-display">No active encounter</div>
+            <div class="combat-actions">
+                <button id="engage-btn" type="button">Engage</button>
+                <button id="attack-btn" type="button">Attack</button>
+                <button id="flee-btn" type="button">Flee</button>
+                <button id="use-herb-btn" type="button">Use Herb</button>
+            </div>
+            <div id="combat-log" aria-live="polite"></div>
+        </section>
 
         <aside id="shop-panel" class="pullout-drawer top" hidden>
             <div class="drawer-header">

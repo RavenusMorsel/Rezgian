@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, Integer, String, Text, func
+from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database.base import Base
@@ -47,3 +47,27 @@ class Character(Base):
     message_count: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
     last_active_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class CharacterStats(Base):
+    __tablename__ = "character_stats"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    character_id: Mapped[int] = mapped_column(ForeignKey("characters.id", ondelete="CASCADE"), unique=True, index=True)
+    health: Mapped[int] = mapped_column(Integer, default=30)
+    max_health: Mapped[int] = mapped_column(Integer, default=30)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class CombatEncounter(Base):
+    __tablename__ = "combat_encounters"
+    __table_args__ = (UniqueConstraint("character_id", "room_id", name="uq_character_room_encounter"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    character_id: Mapped[int] = mapped_column(ForeignKey("characters.id", ondelete="CASCADE"), index=True)
+    room_id: Mapped[str] = mapped_column(String(64), index=True)
+    enemy_name: Mapped[str] = mapped_column(String(64))
+    enemy_health: Mapped[int] = mapped_column(Integer)
+    enemy_max_health: Mapped[int] = mapped_column(Integer)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

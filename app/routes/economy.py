@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.database.base import get_db
 from app.database.models import Character
 from app.routes.auth import get_current_character
+from app.systems.player_state import apply_heal, get_or_create_stats, serialize_vitals
 
 router = APIRouter()
 
@@ -17,11 +18,13 @@ ITEM_CATALOG: dict[str, dict] = {
         "name": "Foamy Ale",
         "description": "A hearty mug to steady your nerves.",
         "price": 4,
+        "use": {"heal": 2},
     },
     "stew": {
         "name": "Thick Tavern Stew",
         "description": "Warm, salty, and suspiciously filling.",
         "price": 7,
+        "use": {"heal": 6},
     },
     "lockpick_set": {
         "name": "Lockpick Set",
@@ -32,6 +35,7 @@ ITEM_CATALOG: dict[str, dict] = {
         "name": "Healing Herb",
         "description": "A bitter herb bundle used in simple remedies.",
         "price": 12,
+        "use": {"heal": 12},
     },
     "torch": {
         "name": "Pitch Torch",
@@ -84,6 +88,7 @@ def _serialize_inventory(inventory: dict[str, int]) -> list[dict]:
                 "description": item_meta["description"] if item_meta else "Unknown item",
                 "quantity": qty,
                 "base_price": item_meta["price"] if item_meta else 0,
+                "usable": bool(item_meta and item_meta.get("use")),
             }
         )
     return output
@@ -106,14 +111,18 @@ def _shop_for_room(room_id: str) -> list[dict]:
 @router.get("/state")
 def economy_state(
     room_id: str = "",
+    db: Session = Depends(get_db),
     character: Character = Depends(get_current_character),
 ):
     inventory = _load_inventory(character.inventory_json)
+    stats = get_or_create_stats(db, character)
+    db.commit()
     return {
         "character": {
             "name": character.name,
             "currency": character.currency,
         },
+        "vitals": serialize_vitals(stats),
         "inventory": _serialize_inventory(inventory),
         "shop": _shop_for_room(room_id),
     }
@@ -126,6 +135,11 @@ class BuyRequest(BaseModel):
 
 
 class SellRequest(BaseModel):
+    item_id: str = Field(min_length=1, max_length=64)
+    quantity: int = Field(default=1, ge=1, le=20)
+
+
+class UseItemRequest(BaseModel):
     item_id: str = Field(min_length=1, max_length=64)
     quantity: int = Field(default=1, ge=1, le=20)
 
@@ -153,11 +167,13 @@ def buy_item(
 
     character.currency -= total_cost
     character.inventory_json = _dump_inventory(inventory)
+    stats = get_or_create_stats(db, character)
     db.commit()
 
     return {
         "status": "ok",
         "currency": character.currency,
+        "vitals": serialize_vitals(stats),
         "inventory": _serialize_inventory(inventory),
     }
 
@@ -188,10 +204,61 @@ def sell_item(
 
     character.currency += total_gain
     character.inventory_json = _dump_inventory(inventory)
+    stats = get_or_create_stats(db, character)
     db.commit()
 
     return {
         "status": "ok",
         "currency": character.currency,
+        "vitals": serialize_vitals(stats),
+        "inventory": _serialize_inventory(inventory),
+    }
+
+
+@router.post("/use")
+def use_item(
+    payload: UseItemRequest,
+    db: Session = Depends(get_db),
+    character: Character = Depends(get_current_character),
+):
+    item = ITEM_CATALOG.get(payload.item_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Unknown item")
+
+    use_effect = item.get("use")
+    if not use_effect:
+        raise HTTPException(status_code=400, detail="That item cannot be used right now")
+
+    inventory = _load_inventory(character.inventory_json)
+    owned = inventory.get(payload.item_id, 0)
+    if owned < payload.quantity:
+        raise HTTPException(status_code=400, detail="You do not have enough of that item")
+
+    stats = get_or_create_stats(db, character)
+    total_healed = 0
+
+    if "heal" in use_effect:
+        for _ in range(payload.quantity):
+            total_healed += apply_heal(stats, int(use_effect["heal"]))
+
+    remaining = owned - payload.quantity
+    if remaining > 0:
+        inventory[payload.item_id] = remaining
+    else:
+        inventory.pop(payload.item_id, None)
+
+    character.inventory_json = _dump_inventory(inventory)
+    db.commit()
+
+    return {
+        "status": "ok",
+        "used": {
+            "item_id": payload.item_id,
+            "quantity": payload.quantity,
+        },
+        "effects": {
+            "healed": total_healed,
+        },
+        "vitals": serialize_vitals(stats),
         "inventory": _serialize_inventory(inventory),
     }
