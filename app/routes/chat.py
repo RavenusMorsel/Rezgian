@@ -1,5 +1,7 @@
+import asyncio
 import hashlib
 import random
+import time
 
 from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel, Field
@@ -15,7 +17,10 @@ router = APIRouter()
 CHAT_COIN_OUTCOMES = (0, 1, 2, 3, 4, 5)
 CHAT_COIN_WEIGHTS = (50, 25, 12, 8, 3, 2)
 CELLAR_RAT_USERNAME = "Cellar Rat"
-CELLAR_RAT_CHANCE = 0.22
+CELLAR_RAT_CHANCE = 0.28
+CELLAR_RAT_MAX_SILENT_MESSAGES = 4
+CELLAR_RAT_DELAY_SECONDS = 3.0
+CELLAR_RAT_MIN_INTERVAL_SECONDS = 120.0
 CELLAR_RAT_LINES = (
     "Skritch... skritch...",
     "A rat darts between two barrels.",
@@ -23,6 +28,8 @@ CELLAR_RAT_LINES = (
     "Two bright eyes blink from the dark.",
     "A low squeak echoes near the stairs.",
 )
+CELLAR_RAT_SILENT_STREAK_BY_ROOM: dict[str, int] = {}
+CELLAR_RAT_LAST_TRIGGER_BY_ROOM: dict[str, float] = {}
 
 
 def _roll_chat_coin_reward() -> int:
@@ -32,9 +39,44 @@ def _roll_chat_coin_reward() -> int:
 def _roll_cellar_rat_line(room_id: str) -> str | None:
     if room_id != "cellar":
         return None
-    if random.random() > CELLAR_RAT_CHANCE:
+
+    now = time.monotonic()
+    last_trigger = CELLAR_RAT_LAST_TRIGGER_BY_ROOM.get(room_id)
+    if last_trigger is not None and (now - last_trigger) < CELLAR_RAT_MIN_INTERVAL_SECONDS:
         return None
+
+    streak = CELLAR_RAT_SILENT_STREAK_BY_ROOM.get(room_id, 0)
+    forced = streak >= CELLAR_RAT_MAX_SILENT_MESSAGES
+
+    if not forced and random.random() > CELLAR_RAT_CHANCE:
+        CELLAR_RAT_SILENT_STREAK_BY_ROOM[room_id] = streak + 1
+        return None
+
+    CELLAR_RAT_SILENT_STREAK_BY_ROOM[room_id] = 0
+    CELLAR_RAT_LAST_TRIGGER_BY_ROOM[room_id] = now
     return random.choice(CELLAR_RAT_LINES)
+
+
+async def _emit_delayed_rat_line(room_id: str, rat_line: str):
+    await asyncio.sleep(CELLAR_RAT_DELAY_SECONDS)
+
+    db = SessionLocal()
+    try:
+        db.add(
+            ChatMessageDB(
+                room_id=room_id,
+                username=CELLAR_RAT_USERNAME,
+                message=rat_line,
+            )
+        )
+        db.commit()
+    finally:
+        db.close()
+
+    await manager.broadcast(room_id, {
+        "username": CELLAR_RAT_USERNAME,
+        "message": rat_line,
+    })
 
 
 # ---------------------------------------------------------------------------
@@ -114,14 +156,6 @@ async def websocket_chat(
                     char.currency += _roll_chat_coin_reward()
 
                 rat_line = _roll_cellar_rat_line(room_id)
-                if rat_line:
-                    db.add(
-                        ChatMessageDB(
-                            room_id=room_id,
-                            username=CELLAR_RAT_USERNAME,
-                            message=rat_line,
-                        )
-                    )
                 db.commit()
             finally:
                 db.close()
@@ -132,10 +166,7 @@ async def websocket_chat(
             })
 
             if rat_line:
-                await manager.broadcast(room_id, {
-                    "username": CELLAR_RAT_USERNAME,
-                    "message": rat_line,
-                })
+                asyncio.create_task(_emit_delayed_rat_line(room_id, rat_line))
     except WebSocketDisconnect:
         manager.disconnect(room_id, ws)
 
