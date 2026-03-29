@@ -9,10 +9,12 @@
     --paper: #f7b15b;
 }
 
+/* Global reset */
 * {
     box-sizing: border-box;
 }
 
+/* Framed page container */
 body {
     margin: 0;
     height: 100vh;
@@ -58,6 +60,7 @@ body {
     text-shadow: 0 1px 2px #0004;
 }
 
+/* Hero/content */
 .hero-image {
     display: block;
     width: 100%;
@@ -79,6 +82,7 @@ body {
     margin: 0.8em 0 1.4em;
 }
 
+/* Auth panel */
 .panel {
     width: min(700px, 100%);
     margin: 0 auto;
@@ -137,6 +141,7 @@ button:hover {
     color: #f3d7a8;
 }
 
+/* Responsive rules */
 @media (max-width: 768px) {
     #container {
         inset: 1.5vh;

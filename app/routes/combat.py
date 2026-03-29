@@ -1,3 +1,5 @@
+"""Room-based combat endpoints and encounter lifecycle management."""
+
 import random
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -29,6 +31,7 @@ class CombatRoomRequest(BaseModel):
 
 
 def _enemy_for_room(room_id: str) -> dict | None:
+    """Return encounter profile for a combat-enabled room."""
     return ENEMY_CATALOG.get(room_id)
 
 
@@ -58,6 +61,8 @@ def _create_encounter(db: Session, character: Character, room_id: str) -> Combat
     profile = _enemy_for_room(room_id)
     if profile is None:
         raise HTTPException(status_code=400, detail="Combat is not available in this room")
+
+    # Encounters are deterministic from room profile and persist until victory/flee/defeat.
     encounter = CombatEncounter(
         character_id=character.id,
         room_id=room_id,

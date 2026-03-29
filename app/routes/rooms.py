@@ -1,3 +1,5 @@
+"""Page route for room rendering and visit tracking."""
+
 from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -12,6 +14,7 @@ templates = Jinja2Templates(directory="app/templates")
 
 @router.get("/room/{room_id}")
 async def room_page(request: Request, room_id: str, db: Session = Depends(get_db)):
+    """Render the room page and increment visit counters."""
     room_data = load_room(room_id)
 
     room_state = db.query(RoomState).filter(RoomState.room_id == room_id).first()

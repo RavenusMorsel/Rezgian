@@ -1,3 +1,5 @@
+"""SQLAlchemy ORM models for chat, rooms, characters, and combat state."""
+
 from datetime import datetime
 
 from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, UniqueConstraint, func
@@ -7,6 +9,8 @@ from app.database.base import Base
 
 
 class ChatMessageDB(Base):
+    """Persisted chat lines per room."""
+
     __tablename__ = "chat_messages"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -17,6 +21,8 @@ class ChatMessageDB(Base):
 
 
 class PlayerState(Base):
+    """Legacy/lightweight player state keyed by username."""
+
     __tablename__ = "player_states"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -27,6 +33,8 @@ class PlayerState(Base):
 
 
 class RoomState(Base):
+    """Aggregate room visit tracking."""
+
     __tablename__ = "room_states"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -36,6 +44,8 @@ class RoomState(Base):
 
 
 class Character(Base):
+    """Primary player-character record and economy state."""
+
     __tablename__ = "characters"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -50,6 +60,8 @@ class Character(Base):
 
 
 class CharacterStats(Base):
+    """Character vitals stored separately for gameplay systems."""
+
     __tablename__ = "character_stats"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -60,6 +72,8 @@ class CharacterStats(Base):
 
 
 class CombatEncounter(Base):
+    """Single active encounter per character per room."""
+
     __tablename__ = "combat_encounters"
     __table_args__ = (UniqueConstraint("character_id", "room_id", name="uq_character_room_encounter"),)
 

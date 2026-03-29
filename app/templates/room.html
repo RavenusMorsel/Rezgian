@@ -5,93 +5,96 @@
     <title>{{ room.name }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/app/static/css/room.css">
-
 </head>
 <body style="background: url('{{ room.background }}') center/cover no-repeat;">
+    <!-- Exit shortcuts are rendered from room JSON metadata. -->
     {% if room.exits %}
         <aside id="exits-panel" aria-label="Room exits">
             {% for exit_name, target_room in room.exits.items() %}
-            <a class="exit-button" href="/room/{{ target_room }}">{{ exit_name | replace('_', ' ') | title }}</a>
+                <a class="exit-button" href="/room/{{ target_room }}">{{ exit_name | replace('_', ' ') | title }}</a>
             {% endfor %}
         </aside>
     {% endif %}
 
-<div id="container">
-    <div id="Main">
+    <div id="container">
+        <div id="Main">
 
-        <header>
-            <div id="header-left">
-                <div id="active-character">Not signed in</div>
-                <div id="health-display">HP: 0/0</div>
-            </div>
+            <!-- Header: left stats, centered room context, right utility. -->
+            <header>
+                <div id="header-left">
+                    <div id="active-character">Not signed in</div>
+                    <div id="health-display">HP: 0/0</div>
+                </div>
 
-            <div id="header-center">
-                <div id="room-title">{{ room.name }}</div>
-                <div id="room-description">{{ room.description }}</div>
-            </div>
+                <div id="header-center">
+                    <div id="room-title">{{ room.name }}</div>
+                    <div id="room-description">{{ room.description }}</div>
+                </div>
 
-            <div id="header-right">
-                <div id="coin-display">🪙 0</div>
-                <button id="shop-toggle-header" type="button" class="icon-toggle" hidden title="Open tavern counter">🍺</button>
-            </div>
-        </header>
+                <div id="header-right">
+                    <div id="coin-display">🪙 0</div>
+                    <button id="shop-toggle-header" type="button" class="icon-toggle" hidden title="Open tavern counter">🍺</button>
+                </div>
+            </header>
 
-        <aside id="shop-panel" class="pullout-drawer top" hidden>
-            <div class="drawer-header">
-                <div class="econ-title">Tavern Counter</div>
-                <button id="shop-close" type="button" class="drawer-close" aria-label="Close shop">x</button>
-            </div>
-            <div id="shop-items"></div>
-        </aside>
+            <aside id="shop-panel" class="pullout-drawer top" hidden>
+                <div class="drawer-header">
+                    <div class="econ-title">Tavern Counter</div>
+                    <button id="shop-close" type="button" class="drawer-close" aria-label="Close shop">x</button>
+                </div>
+                <div id="shop-items"></div>
+            </aside>
 
-        <aside id="inventory-panel" class="pullout-drawer bottom" hidden>
-            <div class="econ-title">Inventory</div>
-            <div id="inventory-items">Empty pack</div>
-        </aside>
+            <aside id="inventory-panel" class="pullout-drawer bottom" hidden>
+                <div class="econ-title">Inventory</div>
+                <div id="inventory-items">Empty pack</div>
+            </aside>
 
-        <div id="chat-wrapper">
-            <div id="chat-container">
-                <div id="chat-log"></div>
+            <!-- Main chat surface. -->
+            <div id="chat-wrapper">
+                <div id="chat-container">
+                    <div id="chat-log"></div>
 
-                <div id="chat-inputs">
-                    <button id="action-toggle" type="button" title="Toggle action (/me)">*</button>
-                    <input id="message" placeholder="Type your message..." autocomplete="off">
-                    <button id="send-button" type="button" onclick="sendMessage()">Send</button>
+                    <div id="chat-inputs">
+                        <button id="action-toggle" type="button" title="Toggle action (/me)">*</button>
+                        <input id="message" placeholder="Type your message..." autocomplete="off">
+                        <button id="send-button" type="button" onclick="sendMessage()">Send</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <footer>
-
-            {% if room.id == "cellar" %}
-            <section id="combat-panel" aria-label="Combat controls" hidden>
-                <div id="enemy-display">No active encounter</div>
-                <div id="combat-log" aria-live="polite"></div>
-            </section>
-            {% endif %}
-            <div id="footer-controls">
+            <!-- Footer utility strip stays clear of chat input area. -->
+            <footer>
                 {% if room.id == "cellar" %}
-                <div class="combat-actions" hidden>
-                <button id="engage-btn" type="button">Engage</button>
-                <button id="attack-btn" type="button">Attack</button>
-                <button id="flee-btn" type="button">Flee</button>
-                <button id="use-herb-btn" type="button">Use Herb</button>
-            </div>
+                    <section id="combat-panel" aria-label="Combat controls" hidden>
+                        <div id="enemy-display">No active encounter</div>
+                        <div id="combat-log" aria-live="polite"></div>
+                    </section>
                 {% endif %}
-                <button id="inventory-toggle" type="button" class="pullout-toggle">Pack</button>
-                <button id="ambience-toggle">♪</button>
-            </div>
-        </footer>
 
+                <div id="footer-controls">
+                    {% if room.id == "cellar" %}
+                        <div class="combat-actions" hidden>
+                            <button id="engage-btn" type="button">Engage</button>
+                            <button id="attack-btn" type="button">Attack</button>
+                            <button id="flee-btn" type="button">Flee</button>
+                            <button id="use-herb-btn" type="button">Use Herb</button>
+                        </div>
+                    {% endif %}
+                    <button id="inventory-toggle" type="button" class="pullout-toggle">Pack</button>
+                    <button id="ambience-toggle">♪</button>
+                </div>
+            </footer>
+
+        </div>
     </div>
-</div>
 
-<script>
-    const roomId = "{{ room.id }}";
-    const roomAudio = {{ room.audio | tojson }};
-</script>
+    <script>
+        const roomId = "{{ room.id }}";
+        const roomAudio = {{ room.audio | tojson }};
+    </script>
 
-<script src="/app/static/js/chat.js"></script>
+    <script src="/app/static/js/chat.js"></script>
 
 </body>
 </html>

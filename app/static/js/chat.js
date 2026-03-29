@@ -8,6 +8,10 @@ let economyState = null;
 let economyRouteMissing = false;
 let combatState = null;
 
+// ---------------------------------------------------------------------------
+// Shared UI helpers
+// ---------------------------------------------------------------------------
+
 function setCombatPanelVisibility(isVisible) {
     const combatPanel = document.getElementById("combat-panel");
     const combatActions = document.querySelector("#footer-controls .combat-actions");
@@ -143,6 +147,7 @@ function renderEconomyPanel() {
         if (!economyState.inventory || economyState.inventory.length === 0) {
             inventoryEl.textContent = "Empty pack";
         } else {
+            // Build rows manually so actions can wire to current inventory state.
             economyState.inventory.forEach(item => {
                 const row = document.createElement("div");
                 row.className = "inventory-item";
@@ -447,7 +452,7 @@ function appendMessage(username, message) {
 }
 
 // ---------------------------------------------------------------------------
-// Load history once via HTTP on page open
+// Load history once over HTTP on initial page load
 // ---------------------------------------------------------------------------
 
 async function fetchHistory() {
@@ -489,6 +494,7 @@ function openSocket() {
             window.location.href = "/";
             return;
         }
+
         // Reconnect after 2s on unexpected close
         setTimeout(openSocket, 2000);
     };
@@ -655,6 +661,10 @@ function initializeChatControls() {
 
 let audioPlayer = null;
 let ambienceEnabled = false;
+
+// ---------------------------------------------------------------------------
+// Ambient audio controls
+// ---------------------------------------------------------------------------
 
 function playRandomTrack() {
     if (!roomAudio || roomAudio.length === 0) return;

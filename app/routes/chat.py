@@ -1,3 +1,5 @@
+"""Realtime room chat routes with lightweight reward and ambient NPC behavior."""
+
 import asyncio
 import hashlib
 import random
@@ -33,10 +35,12 @@ CELLAR_RAT_LAST_TRIGGER_BY_ROOM: dict[str, float] = {}
 
 
 def _roll_chat_coin_reward() -> int:
+    """Return weighted chat coin reward (biased toward low values)."""
     return random.choices(CHAT_COIN_OUTCOMES, weights=CHAT_COIN_WEIGHTS, k=1)[0]
 
 
 def _roll_cellar_rat_line(room_id: str) -> str | None:
+    """Pick an ambient cellar rat line with streak and cooldown safeguards."""
     if room_id != "cellar":
         return None
 
@@ -58,6 +62,7 @@ def _roll_cellar_rat_line(room_id: str) -> str | None:
 
 
 async def _emit_delayed_rat_line(room_id: str, rat_line: str):
+    """Emit rat ambience after a short delay to feel less mechanical."""
     await asyncio.sleep(CELLAR_RAT_DELAY_SECONDS)
 
     db = SessionLocal()
@@ -84,6 +89,8 @@ async def _emit_delayed_rat_line(room_id: str, rat_line: str):
 # ---------------------------------------------------------------------------
 
 class ConnectionManager:
+    """Track websocket connections per room for targeted broadcasts."""
+
     def __init__(self):
         self.rooms: dict[str, list[WebSocket]] = {}
 
@@ -166,6 +173,7 @@ async def websocket_chat(
             })
 
             if rat_line:
+                # Fire-and-forget ambient line so player messages are never delayed.
                 asyncio.create_task(_emit_delayed_rat_line(room_id, rat_line))
     except WebSocketDisconnect:
         manager.disconnect(room_id, ws)

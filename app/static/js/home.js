@@ -1,5 +1,9 @@
 const TOKEN_KEY = "rezgian_character_token";
 
+// ---------------------------------------------------------------------------
+// Small UI helpers
+// ---------------------------------------------------------------------------
+
 function getTokenModalElements() {
     return {
         modal: document.getElementById("token-modal"),
@@ -24,6 +28,8 @@ function setLoggedInUI(hasToken) {
 
 function setStatus(message, isError = false) {
     const status = document.getElementById("status");
+    if (!status) return;
+
     status.textContent = message;
     status.style.color = isError ? "#ffbc9a" : "#f3d7a8";
 }
@@ -40,6 +46,10 @@ function redirectToLastRoom(character) {
     const room = character.last_room_id || "tavern";
     window.location.href = `/room/${room}`;
 }
+
+// ---------------------------------------------------------------------------
+// Token export modal
+// ---------------------------------------------------------------------------
 
 async function renderTokenQr(token) {
     const { qr } = getTokenModalElements();
@@ -106,6 +116,10 @@ async function copyTokenFromModal() {
         setStatus("Could not copy automatically. The token is selected for manual copy.", true);
     }
 }
+
+// ---------------------------------------------------------------------------
+// Auth actions
+// ---------------------------------------------------------------------------
 
 async function createCharacter() {
     const name = document.getElementById("character-name").value.trim();
@@ -213,6 +227,10 @@ function initializeTokenUI() {
         setStatus("Saved token found. Press Continue to log back in.");
     }
 }
+
+// ---------------------------------------------------------------------------
+// Event wiring
+// ---------------------------------------------------------------------------
 
 const createButton = document.getElementById("create-btn");
 const continueButton = document.getElementById("continue-btn");

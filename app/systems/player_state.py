@@ -1,3 +1,5 @@
+"""Player vitals helpers shared by combat and economy systems."""
+
 from sqlalchemy.orm import Session
 
 from app.database.models import Character, CharacterStats
@@ -6,6 +8,7 @@ DEFAULT_MAX_HEALTH = 30
 
 
 def get_or_create_stats(db: Session, character: Character) -> CharacterStats:
+    """Fetch stats row for a character, creating defaults if absent."""
     stats = (
         db.query(CharacterStats)
         .filter(CharacterStats.character_id == character.id)
@@ -23,6 +26,7 @@ def get_or_create_stats(db: Session, character: Character) -> CharacterStats:
 
 
 def serialize_vitals(stats: CharacterStats) -> dict:
+    """Return standardized vitals payload for frontend rendering."""
     return {
         "health": stats.health,
         "max_health": stats.max_health,
@@ -33,6 +37,7 @@ def serialize_vitals(stats: CharacterStats) -> dict:
 
 
 def apply_heal(stats: CharacterStats, amount: int) -> int:
+    """Apply healing and return actual restored amount."""
     if amount <= 0:
         return 0
     before = stats.health
@@ -41,6 +46,7 @@ def apply_heal(stats: CharacterStats, amount: int) -> int:
 
 
 def apply_damage(stats: CharacterStats, amount: int) -> int:
+    """Apply damage and return actual health lost."""
     if amount <= 0:
         return 0
     before = stats.health

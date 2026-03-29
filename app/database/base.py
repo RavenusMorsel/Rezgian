@@ -1,3 +1,7 @@
+"""Database engine/session setup and request-scoped session dependency."""
+
+from collections.abc import Generator
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
@@ -9,7 +13,8 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
-def get_db():
+def get_db() -> Generator:
+    """Yield a database session for a single request lifecycle."""
     db = SessionLocal()
     try:
         yield db

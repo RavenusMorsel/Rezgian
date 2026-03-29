@@ -1,3 +1,5 @@
+"""Economy endpoints for shop state, buying/selling, and consumable item use."""
+
 import json
 from collections import Counter
 
@@ -50,6 +52,7 @@ ROOM_SHOPS: dict[str, list[str]] = {
 
 
 def _load_inventory(raw: str) -> dict[str, int]:
+    """Load inventory from JSON, supporting both legacy list and dict formats."""
     if not raw:
         return {}
 
@@ -73,11 +76,13 @@ def _load_inventory(raw: str) -> dict[str, int]:
 
 
 def _dump_inventory(inventory: dict[str, int]) -> str:
+    """Persist inventory in compact deterministic JSON form."""
     clean = {k: int(v) for k, v in inventory.items() if isinstance(k, str) and int(v) > 0}
     return json.dumps(clean, separators=(",", ":"))
 
 
 def _serialize_inventory(inventory: dict[str, int]) -> list[dict]:
+    """Expand inventory IDs into UI-friendly item metadata payloads."""
     output = []
     for item_id, qty in sorted(inventory.items()):
         item_meta = ITEM_CATALOG.get(item_id)
@@ -95,6 +100,7 @@ def _serialize_inventory(inventory: dict[str, int]) -> list[dict]:
 
 
 def _shop_for_room(room_id: str) -> list[dict]:
+    """Return catalog entries available for a specific room shop."""
     item_ids = ROOM_SHOPS.get(room_id, [])
     return [
         {

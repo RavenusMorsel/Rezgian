@@ -1,3 +1,5 @@
+"""Character authentication and token-based session routes."""
+
 import hashlib
 import secrets
 from datetime import datetime
@@ -20,6 +22,7 @@ TOKEN_STORAGE_KEY = "rezgian_character_token"
 
 
 def _hash_token(token: str) -> str:
+    """Hash plaintext token for persistent lookup without storing raw tokens."""
     return hashlib.sha256(token.encode("utf-8")).hexdigest()
 
 
@@ -37,6 +40,7 @@ def _serialize_character(character: Character) -> dict:
 def get_current_character(
     db: Session = Depends(get_db), authorization: str | None = Header(default=None)
 ) -> Character:
+    """Resolve the current character from the Authorization bearer token."""
     if not authorization or not authorization.lower().startswith("bearer "):
         raise HTTPException(status_code=401, detail="Missing bearer token")
 
