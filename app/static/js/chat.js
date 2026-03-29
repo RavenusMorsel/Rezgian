@@ -10,8 +10,15 @@ let combatState = null;
 
 function setCombatPanelVisibility(isVisible) {
     const combatPanel = document.getElementById("combat-panel");
-    if (!combatPanel) return;
-    combatPanel.hidden = !isVisible;
+    const combatActions = document.querySelector("#footer-controls .combat-actions");
+
+    if (combatPanel) {
+        combatPanel.hidden = !isVisible;
+    }
+
+    if (combatActions) {
+        combatActions.hidden = !isVisible;
+    }
 }
 
 function setCombatLog(text, isError = false) {
