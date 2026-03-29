@@ -237,6 +237,8 @@ async function sellItem(itemId, quantity) {
 
 function appendMessage(username, message) {
     const log = document.getElementById("chat-log");
+    if (!log) return;
+
     const line = document.createElement("div");
 
     const isAction = typeof message === "string" && message.startsWith("/me ");
@@ -261,6 +263,7 @@ async function fetchHistory() {
         if (!res.ok) return;
         const data = await res.json();
         const log = document.getElementById("chat-log");
+        if (!log) return;
         log.innerHTML = "";
         data.messages.forEach(msg => appendMessage(msg.username, msg.message));
     } catch (err) {
@@ -308,6 +311,8 @@ function openSocket() {
 
 function sendMessage() {
     const messageInput = document.getElementById("message");
+    if (!messageInput) return;
+
     const message = messageInput.value.trim();
 
     if (!activeCharacter || !message) return;
@@ -444,22 +449,28 @@ function playRandomTrack() {
     audioPlayer = new Audio(track);
     audioPlayer.volume = 0.5;
     audioPlayer.loop = true;
-    audioPlayer.play();
+    audioPlayer.play().catch(() => {
+        audioPlayer = null;
+    });
 }
 
-document.getElementById("ambience-toggle").addEventListener("click", () => {
-    ambienceEnabled = !ambienceEnabled;
+const ambienceToggle = document.getElementById("ambience-toggle");
+if (ambienceToggle) {
+    ambienceToggle.addEventListener("click", () => {
+        ambienceEnabled = !ambienceEnabled;
 
-    const btn = document.getElementById("ambience-toggle");
+        const btn = document.getElementById("ambience-toggle");
+        if (!btn) return;
 
-    if (ambienceEnabled) {
-        playRandomTrack();
-        btn.textContent = "♫";
-    } else {
-        if (audioPlayer) {
-            audioPlayer.pause();
-            audioPlayer = null;
+        if (ambienceEnabled) {
+            playRandomTrack();
+            btn.textContent = "♫";
+        } else {
+            if (audioPlayer) {
+                audioPlayer.pause();
+                audioPlayer = null;
+            }
+            btn.textContent = "♪";
         }
-        btn.textContent = "♪";
-    }
-});
+    });
+}

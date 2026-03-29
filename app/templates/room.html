@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <title>{{ room.name }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/app/static/css/room.css">  <!-- keep if needed -->
+    <link rel="stylesheet" href="/app/static/css/room.css">
 
 </head>
 <body style="background: url('{{ room.background }}') center/cover no-repeat;">
-            {% if room.exits %}
+    {% if room.exits %}
         <aside id="exits-panel" aria-label="Room exits">
-           {% for exit_name, target_room in room.exits.items() %}
+            {% for exit_name, target_room in room.exits.items() %}
             <a class="exit-button" href="/room/{{ target_room }}">{{ exit_name | replace('_', ' ') | title }}</a>
             {% endfor %}
         </aside>
-        {% endif %}
+    {% endif %}
 
 <div id="container">
     <div id="Main">

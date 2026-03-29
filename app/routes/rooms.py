@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Request
-from fastapi import Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
@@ -9,6 +8,7 @@ from app.utils.room_loader import load_room
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
+
 
 @router.get("/room/{room_id}")
 async def room_page(request: Request, room_id: str, db: Session = Depends(get_db)):
@@ -27,6 +27,6 @@ async def room_page(request: Request, room_id: str, db: Session = Depends(get_db
         "room.html",
         {
             "request": request,
-            "room": room_data
-        }
+            "room": room_data,
+        },
     )
