@@ -14,10 +14,27 @@ router = APIRouter()
 # Weighted chat coin rewards per message (heavily biased toward 0).
 CHAT_COIN_OUTCOMES = (0, 1, 2, 3, 4, 5)
 CHAT_COIN_WEIGHTS = (50, 25, 12, 8, 3, 2)
+CELLAR_RAT_USERNAME = "Cellar Rat"
+CELLAR_RAT_CHANCE = 0.22
+CELLAR_RAT_LINES = (
+    "Skritch... skritch...",
+    "A rat darts between two barrels.",
+    "Tiny claws scrape across old stone.",
+    "Two bright eyes blink from the dark.",
+    "A low squeak echoes near the stairs.",
+)
 
 
 def _roll_chat_coin_reward() -> int:
     return random.choices(CHAT_COIN_OUTCOMES, weights=CHAT_COIN_WEIGHTS, k=1)[0]
+
+
+def _roll_cellar_rat_line(room_id: str) -> str | None:
+    if room_id != "cellar":
+        return None
+    if random.random() > CELLAR_RAT_CHANCE:
+        return None
+    return random.choice(CELLAR_RAT_LINES)
 
 
 # ---------------------------------------------------------------------------
@@ -80,6 +97,7 @@ async def websocket_chat(
         while True:
             text = await ws.receive_text()
             msg_text = text[:1000]
+            rat_line: str | None = None
 
             db = SessionLocal()
             try:
@@ -94,6 +112,16 @@ async def websocket_chat(
                     char.last_room_id = room_id
                     char.message_count += 1
                     char.currency += _roll_chat_coin_reward()
+
+                rat_line = _roll_cellar_rat_line(room_id)
+                if rat_line:
+                    db.add(
+                        ChatMessageDB(
+                            room_id=room_id,
+                            username=CELLAR_RAT_USERNAME,
+                            message=rat_line,
+                        )
+                    )
                 db.commit()
             finally:
                 db.close()
@@ -102,6 +130,12 @@ async def websocket_chat(
                 "username": character_name,
                 "message": msg_text,
             })
+
+            if rat_line:
+                await manager.broadcast(room_id, {
+                    "username": CELLAR_RAT_USERNAME,
+                    "message": rat_line,
+                })
     except WebSocketDisconnect:
         manager.disconnect(room_id, ws)
 
@@ -131,8 +165,19 @@ def send_message(
     character.message_count += 1
     coin_reward = _roll_chat_coin_reward()
     character.currency += coin_reward
+
+    rat_line = _roll_cellar_rat_line(msg.room_id)
+    if rat_line:
+        db.add(
+            ChatMessageDB(
+                room_id=msg.room_id,
+                username=CELLAR_RAT_USERNAME,
+                message=rat_line,
+            )
+        )
+
     db.commit()
-    return {"status": "ok", "coin_reward": coin_reward}
+    return {"status": "ok", "coin_reward": coin_reward, "rat_line": rat_line}
 
 
 @router.get("/fetch/{room_id}")
