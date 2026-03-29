@@ -1,4 +1,5 @@
 import hashlib
+import random
 
 from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel, Field
@@ -9,6 +10,14 @@ from app.database.models import Character, ChatMessageDB
 from app.routes.auth import get_current_character
 
 router = APIRouter()
+
+# Weighted chat coin rewards per message (heavily biased toward 0).
+CHAT_COIN_OUTCOMES = (0, 1, 2, 3, 4, 5)
+CHAT_COIN_WEIGHTS = (50, 25, 12, 8, 3, 2)
+
+
+def _roll_chat_coin_reward() -> int:
+    return random.choices(CHAT_COIN_OUTCOMES, weights=CHAT_COIN_WEIGHTS, k=1)[0]
 
 
 # ---------------------------------------------------------------------------
@@ -84,7 +93,7 @@ async def websocket_chat(
                 if char:
                     char.last_room_id = room_id
                     char.message_count += 1
-                    char.currency += 1
+                    char.currency += _roll_chat_coin_reward()
                 db.commit()
             finally:
                 db.close()
@@ -120,9 +129,10 @@ def send_message(
     db.add(saved_message)
     character.last_room_id = msg.room_id
     character.message_count += 1
-    character.currency += 1
+    coin_reward = _roll_chat_coin_reward()
+    character.currency += coin_reward
     db.commit()
-    return {"status": "ok"}
+    return {"status": "ok", "coin_reward": coin_reward}
 
 
 @router.get("/fetch/{room_id}")
