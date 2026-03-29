@@ -8,9 +8,16 @@ let economyState = null;
 let economyRouteMissing = false;
 let combatState = null;
 
+function setCombatPanelVisibility(isVisible) {
+    const combatPanel = document.getElementById("combat-panel");
+    if (!combatPanel) return;
+    combatPanel.hidden = !isVisible;
+}
+
 function setCombatLog(text, isError = false) {
     const combatLog = document.getElementById("combat-log");
-    if (!combatLog) return;
+    const combatPanel = document.getElementById("combat-panel");
+    if (!combatLog || (combatPanel && combatPanel.hidden)) return;
     combatLog.textContent = text;
     combatLog.style.color = isError ? "#f0a7a0" : "#d7be90";
 }
@@ -299,7 +306,12 @@ function renderCombatState() {
     const enemyDisplay = document.getElementById("enemy-display");
     if (!enemyDisplay) return;
 
-    if (!combatState || !combatState.encounter) {
+    if (!combatState || !combatState.combat_available) {
+        enemyDisplay.textContent = "Safe area";
+        return;
+    }
+
+    if (!combatState.encounter) {
         enemyDisplay.textContent = "No active encounter";
         return;
     }
@@ -315,6 +327,7 @@ async function fetchCombatState() {
         });
         if (!res.ok) return;
         combatState = await res.json();
+        setCombatPanelVisibility(Boolean(combatState.combat_available));
         renderVitals(combatState.vitals);
         renderCombatState();
     } catch (err) {
@@ -334,9 +347,12 @@ async function engageCombat() {
             throw new Error(data?.detail || `Engage failed (${res.status})`);
         }
         combatState = await res.json();
+        setCombatPanelVisibility(Boolean(combatState.combat_available));
         renderVitals(combatState.vitals);
         renderCombatState();
-        setCombatLog(`Encountered ${combatState.encounter.enemy_name}.`);
+        if (combatState.encounter) {
+            setCombatLog(`Encountered ${combatState.encounter.enemy_name}.`);
+        }
     } catch (err) {
         setCombatLog(`Engage error: ${err.message}`, true);
     }
@@ -355,9 +371,11 @@ async function attackCombat() {
         }
         const data = await res.json();
         combatState = {
+            combat_available: data.combat_available,
             vitals: data.vitals,
             encounter: data.encounter
         };
+        setCombatPanelVisibility(Boolean(combatState.combat_available));
         renderVitals(data.vitals);
         renderCombatState();
         if (data.log && data.log.length > 0) {
@@ -381,11 +399,15 @@ async function fleeCombat() {
             throw new Error(data?.detail || `Flee failed (${res.status})`);
         }
         combatState = {
+            combat_available: data.combat_available ?? combatState?.combat_available ?? false,
             vitals: combatState?.vitals || economyState?.vitals || null,
             encounter: null
         };
+        setCombatPanelVisibility(Boolean(combatState.combat_available));
         renderCombatState();
-        setCombatLog("You disengage and step back.");
+        if (combatState.combat_available) {
+            setCombatLog("You disengage and step back.");
+        }
     } catch (err) {
         setCombatLog(`Flee error: ${err.message}`, true);
     }

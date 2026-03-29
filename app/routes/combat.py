@@ -10,6 +10,7 @@ from app.routes.auth import get_current_character
 from app.systems.player_state import apply_damage, get_or_create_stats, serialize_vitals
 
 router = APIRouter()
+COMBAT_ENABLED_ROOMS = {"cellar"}
 
 
 ENEMY_CATALOG: dict[str, dict] = {
@@ -20,35 +21,6 @@ ENEMY_CATALOG: dict[str, dict] = {
         "enemy_damage": (1, 4),
         "reward": (2, 5),
     },
-    "forest_path": {
-        "name": "Scrub Wolf",
-        "health": 22,
-        "player_damage": (3, 8),
-        "enemy_damage": (2, 6),
-        "reward": (3, 7),
-    },
-    "deep_forest_path": {
-        "name": "Briar Boar",
-        "health": 28,
-        "player_damage": (3, 8),
-        "enemy_damage": (3, 7),
-        "reward": (5, 10),
-    },
-    "main_road": {
-        "name": "Roadside Bandit",
-        "health": 24,
-        "player_damage": (3, 8),
-        "enemy_damage": (2, 7),
-        "reward": (4, 9),
-    },
-}
-
-DEFAULT_ENEMY = {
-    "name": "Restless Drifter",
-    "health": 18,
-    "player_damage": (3, 8),
-    "enemy_damage": (2, 5),
-    "reward": (3, 6),
 }
 
 
@@ -56,8 +28,8 @@ class CombatRoomRequest(BaseModel):
     room_id: str = Field(min_length=1, max_length=64)
 
 
-def _enemy_for_room(room_id: str) -> dict:
-    return ENEMY_CATALOG.get(room_id, DEFAULT_ENEMY)
+def _enemy_for_room(room_id: str) -> dict | None:
+    return ENEMY_CATALOG.get(room_id)
 
 
 def _serialize_encounter(encounter: CombatEncounter | None) -> dict | None:
@@ -84,6 +56,8 @@ def _get_encounter(db: Session, character: Character, room_id: str) -> CombatEnc
 
 def _create_encounter(db: Session, character: Character, room_id: str) -> CombatEncounter:
     profile = _enemy_for_room(room_id)
+    if profile is None:
+        raise HTTPException(status_code=400, detail="Combat is not available in this room")
     encounter = CombatEncounter(
         character_id=character.id,
         room_id=room_id,
@@ -102,10 +76,12 @@ def combat_state(
     db: Session = Depends(get_db),
     character: Character = Depends(get_current_character),
 ):
+    combat_available = room_id in COMBAT_ENABLED_ROOMS
     stats = get_or_create_stats(db, character)
-    encounter = _get_encounter(db, character, room_id)
+    encounter = _get_encounter(db, character, room_id) if combat_available else None
     db.commit()
     return {
+        "combat_available": combat_available,
         "vitals": serialize_vitals(stats),
         "encounter": _serialize_encounter(encounter),
     }
@@ -117,6 +93,16 @@ def engage(
     db: Session = Depends(get_db),
     character: Character = Depends(get_current_character),
 ):
+    if payload.room_id not in COMBAT_ENABLED_ROOMS:
+        stats = get_or_create_stats(db, character)
+        db.commit()
+        return {
+            "status": "peaceful",
+            "combat_available": False,
+            "vitals": serialize_vitals(stats),
+            "encounter": None,
+        }
+
     stats = get_or_create_stats(db, character)
     if stats.health <= 0:
         stats.health = 1
@@ -128,6 +114,7 @@ def engage(
     db.commit()
     return {
         "status": "engaged",
+        "combat_available": True,
         "vitals": serialize_vitals(stats),
         "encounter": _serialize_encounter(encounter),
     }
@@ -139,6 +126,9 @@ def attack(
     db: Session = Depends(get_db),
     character: Character = Depends(get_current_character),
 ):
+    if payload.room_id not in COMBAT_ENABLED_ROOMS:
+        raise HTTPException(status_code=400, detail="This is a safe area")
+
     stats = get_or_create_stats(db, character)
     if stats.health <= 0:
         raise HTTPException(status_code=400, detail="You are incapacitated")
@@ -164,6 +154,7 @@ def attack(
         db.commit()
         return {
             "status": "victory",
+            "combat_available": True,
             "log": log + [f"{encounter.enemy_name} falls. You gain {reward} coins."],
             "reward": {"currency": reward},
             "vitals": serialize_vitals(stats),
@@ -184,6 +175,7 @@ def attack(
     db.commit()
     return {
         "status": "defeated" if defeated else "ongoing",
+        "combat_available": True,
         "log": log,
         "vitals": serialize_vitals(stats),
         "encounter": None if defeated else _serialize_encounter(encounter),
@@ -197,10 +189,13 @@ def flee(
     db: Session = Depends(get_db),
     character: Character = Depends(get_current_character),
 ):
+    if payload.room_id not in COMBAT_ENABLED_ROOMS:
+        return {"status": "peaceful", "combat_available": False, "encounter": None}
+
     encounter = _get_encounter(db, character, payload.room_id)
     if encounter is not None:
         db.delete(encounter)
         db.commit()
-        return {"status": "fled", "encounter": None}
+        return {"status": "fled", "combat_available": True, "encounter": None}
 
-    return {"status": "idle", "encounter": None}
+    return {"status": "idle", "combat_available": True, "encounter": None}
