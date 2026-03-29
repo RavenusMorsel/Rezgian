@@ -546,7 +546,6 @@
             justify-content: center;
             gap: 8px;
             border-radius: 0px 0px 15px 15px;
-            border-top: 1px solid rgba(140, 90, 30, 0.4);
         }
 
         #footer-controls {
