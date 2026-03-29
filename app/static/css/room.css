@@ -106,19 +106,19 @@
         #header-left,
         #header-right {
             display: flex;
-            align-items: center;
-            gap: 6px;
+            flex-direction: column;
+            gap: 4px;
             min-width: 0;
         }
 
         #header-left {
             justify-self: start;
-            justify-content: flex-start;
+            align-items: flex-start;
         }
 
         #header-right {
             justify-self: end;
-            justify-content: flex-end;
+            align-items: flex-end;
         }
 
         #header-center {
