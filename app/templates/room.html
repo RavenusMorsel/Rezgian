@@ -29,11 +29,6 @@
             </div>
         </header>
 
-        <section id="combat-panel" aria-label="Combat controls" hidden>
-            <div id="enemy-display">No active encounter</div>
-            <div id="combat-log" aria-live="polite"></div>
-        </section>
-
         <aside id="shop-panel" class="pullout-drawer top" hidden>
             <div class="drawer-header">
                 <div class="econ-title">Tavern Counter</div>
@@ -63,6 +58,10 @@
             <div id="room-description">
                 {{ room.description }}
             </div>
+            <section id="combat-panel" aria-label="Combat controls" hidden>
+                <div id="enemy-display">No active encounter</div>
+                <div id="combat-log" aria-live="polite"></div>
+            </section>
             <div id="footer-controls">
                 <div class="combat-actions">
                 <button id="engage-btn" type="button">Engage</button>
