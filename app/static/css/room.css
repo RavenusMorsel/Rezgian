@@ -124,7 +124,8 @@
         }
 
         #character-meta {
-            display: flex;
+            display: grid;
+            grid: auto / auto auto;;
             align-items: center;
             gap: 8px;
             white-space: nowrap;
