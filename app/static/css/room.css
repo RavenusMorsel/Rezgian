@@ -101,10 +101,12 @@
             border-radius: 15px;
             border-bottom: 1px solid rgba(140, 90, 30, 0.4);
             padding: 0 14px;
-        }
+            flex-direction: column;
+            flex-wrap: wrap;
+                }
 
         #room-title {
-            font-size: var(--text-title);
+            font-size: normal;
             font-weight: bold;
             text-shadow: 2px 2px 6px #000;
             color: #f7e8c0;
@@ -521,7 +523,7 @@
         }
 
         #room-description {
-            font-size: var(--text-desc);
+            font-size: smaller;
             text-shadow: 1px 1px 3px #000;
             color: #e8d9a0;
             margin: 0;
