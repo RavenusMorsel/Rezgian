@@ -1,7 +1,7 @@
 {
     "id": "cellar",
     "name": "Cellar",
-    "background": "/static/bg/cellar.png",
+    "background": "/app/static/bg/cellar.png",
     "description": "A dim cellar of damp stone and moldy crates. A skittering rat watches from the shadows while the stairs lead up to the tavern.",
     "exits": {
         "tavern": "tavern"
