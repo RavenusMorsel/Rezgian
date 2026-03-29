@@ -104,8 +104,8 @@ def engage(
         }
 
     stats = get_or_create_stats(db, character)
-    if stats.health <= 0:
-        stats.health = 1
+    if stats.health <= 1:
+        raise HTTPException(status_code=400, detail="You are too wounded to fight. Heal before engaging.")
 
     encounter = _get_encounter(db, character, payload.room_id)
     if encounter is None:
@@ -130,12 +130,12 @@ def attack(
         raise HTTPException(status_code=400, detail="This is a safe area")
 
     stats = get_or_create_stats(db, character)
-    if stats.health <= 0:
-        raise HTTPException(status_code=400, detail="You are incapacitated")
+    if stats.health <= 1:
+        raise HTTPException(status_code=400, detail="You are too wounded to fight. Heal first.")
 
     encounter = _get_encounter(db, character, payload.room_id)
     if encounter is None:
-        encounter = _create_encounter(db, character, payload.room_id)
+        raise HTTPException(status_code=400, detail="No active encounter. Engage first.")
 
     profile = _enemy_for_room(payload.room_id)
     min_p, max_p = profile["player_damage"]
