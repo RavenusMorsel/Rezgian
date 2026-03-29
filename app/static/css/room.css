@@ -91,45 +91,73 @@
             position: sticky;
             top: 0;
             z-index: 20;
-            height: 10vh;
-            min-height: 70px;
+            min-height: 84px;
             background: rgba(30, 20, 10, 0.75);
             backdrop-filter: blur(4px);
-            display: flex;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
             align-items: center;
-            justify-content: space-between;
             border-radius: 15px;
             border-bottom: 1px solid rgba(140, 90, 30, 0.4);
-            padding: 0 14px;
-            flex-direction: column;
-            flex-wrap: wrap;
-                }
+            padding: 8px 14px;
+            column-gap: 10px;
+        }
+
+        #header-left,
+        #header-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        #header-left {
+            justify-self: start;
+            justify-content: flex-start;
+        }
+
+        #header-right {
+            justify-self: end;
+            justify-content: flex-end;
+        }
+
+        #header-center {
+            justify-self: center;
+            text-align: center;
+            max-width: min(72vw, 800px);
+            min-width: 0;
+        }
 
         #room-title {
-            font-size: normal;
+            font-size: clamp(1rem, 0.65vw + 0.88rem, 1.35rem);
             font-weight: bold;
-            text-shadow: 2px 2px 6px #000;
+            text-shadow: 1px 1px 4px #000;
             color: #f7e8c0;
             margin: 0;
-            padding: 0 20px;
+            padding: 0;
             text-align: center;
         }
 
+        #room-description {
+            font-size: clamp(0.66rem, 0.24vw + 0.62rem, 0.82rem);
+            line-height: 1.2;
+            text-shadow: 1px 1px 3px #000;
+            color: #e8d9a0;
+            margin: 2px 0 0;
+            text-align: center;
+            opacity: 0.95;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         #active-character {
-            font-size: clamp(0.8rem, 0.2vw + 0.78rem, 0.92rem);
+            font-size: clamp(0.72rem, 0.12vw + 0.7rem, 0.82rem);
             color: #f5deb4;
             background: rgba(96, 68, 31, 0.65);
             border: 1px solid rgba(181, 132, 72, 0.7);
             border-radius: 999px;
-            padding: 4px 5px;
-            white-space: nowrap;
-        }
-
-        #character-meta {
-            display: grid;
-            grid: auto / auto auto;;
-            align-items: center;
-            gap: 8px;
+            padding: 3px 7px;
             white-space: nowrap;
         }
 
@@ -138,8 +166,8 @@
             background: rgba(96, 68, 31, 0.65);
             color: #f7e8c0;
             border-radius: 999px;
-            padding: 4px 4px;
-            font-size: 0.95rem;
+            padding: 3px 7px;
+            font-size: 0.82rem;
             line-height: 1;
             cursor: pointer;
         }
@@ -149,23 +177,25 @@
         }
 
         #coin-display {
-            font-size: clamp(0.78rem, 0.18vw + 0.75rem, 0.9rem);
+            font-size: clamp(0.74rem, 0.12vw + 0.7rem, 0.84rem);
             color: #ffdd85;
             background: rgba(96, 68, 31, 0.65);
             border: 1px solid rgba(181, 132, 72, 0.7);
             border-radius: 999px;
-            padding: 4px 5px;
+            padding: 3px 8px;
             font-weight: bold;
+            white-space: nowrap;
         }
 
         #health-display {
-            font-size: clamp(0.78rem, 0.18vw + 0.75rem, 0.9rem);
+            font-size: clamp(0.74rem, 0.12vw + 0.7rem, 0.84rem);
             color: #f3d8d8;
             background: rgba(96, 42, 31, 0.75);
             border: 1px solid rgba(181, 92, 72, 0.7);
             border-radius: 999px;
-            padding: 4px 10px;
+            padding: 3px 8px;
             font-weight: bold;
+            white-space: nowrap;
         }
 
         #combat-panel {
@@ -522,15 +552,6 @@
             border-top: 1px solid rgba(140, 90, 30, 0.4);
         }
 
-        #room-description {
-            font-size: smaller;
-            text-shadow: 1px 1px 3px #000;
-            color: #e8d9a0;
-            margin: 0;
-            text-align: center;
-            flex: 1;
-        }
-
         #footer-controls {
             display: flex;
             align-items: center;
@@ -581,21 +602,34 @@
             }
 
             header {
-                justify-content: center;
-                gap: 8px;
-                padding: 0 10px;
-                flex-wrap: wrap;
+                grid-template-columns: 1fr;
+                row-gap: 6px;
+                padding: 8px 10px;
             }
 
             #room-title {
-                width: 100%;
                 padding: 0;
             }
 
-            #character-meta {
+            #header-center {
+                order: 1;
+                max-width: 100%;
+            }
+
+            #header-left,
+            #header-right {
                 width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
+                justify-self: stretch;
+            }
+
+            #header-left {
+                order: 2;
+                justify-content: flex-start;
+            }
+
+            #header-right {
+                order: 3;
+                justify-content: flex-end;
             }
 
             #chat-log {
@@ -644,7 +678,7 @@
             }
 
             #room-description {
-                text-align: left;
+                white-space: normal;
             }
 
             #combat-panel {

@@ -118,7 +118,7 @@ function renderEconomyPanel() {
     const shopItemsEl = document.getElementById("shop-items");
 
     if (!economyState) {
-        if (coinDisplay) coinDisplay.textContent = "Coins: 0";
+        if (coinDisplay) coinDisplay.textContent = "🪙 0";
         if (healthDisplay) healthDisplay.textContent = "HP: 0/0";
         if (inventoryEl) inventoryEl.textContent = "Empty pack";
         if (shopItemsEl) shopItemsEl.textContent = "";
@@ -130,7 +130,7 @@ function renderEconomyPanel() {
     }
 
     if (coinDisplay) {
-        coinDisplay.textContent = `Coins: ${economyState.character.currency}`;
+        coinDisplay.textContent = `🪙 ${economyState.character.currency}`;
     }
     renderVitals(economyState.vitals);
 
