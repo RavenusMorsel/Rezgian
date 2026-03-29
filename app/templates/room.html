@@ -21,6 +21,9 @@
 
         <header>
             <div id="room-title">{{ room.name }}</div>
+                        <div id="room-description">
+                {{ room.description }}
+            </div>
             <div id="character-meta">
                 <div id="active-character">Not signed in</div>
                 <div id="coin-display">Coins: 0</div>
@@ -55,9 +58,7 @@
         </div>
 
         <footer>
-            <div id="room-description">
-                {{ room.description }}
-            </div>
+
             <section id="combat-panel" aria-label="Combat controls" hidden>
                 <div id="enemy-display">No active encounter</div>
                 <div id="combat-log" aria-live="polite"></div>
