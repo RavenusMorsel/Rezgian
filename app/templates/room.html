@@ -48,7 +48,6 @@
             <div id="shop-items"></div>
         </aside>
 
-        <button id="inventory-toggle" type="button" class="pullout-toggle bottom">Pack</button>
         <aside id="inventory-panel" class="pullout-drawer bottom" hidden>
             <div class="econ-title">Inventory</div>
             <div id="inventory-items">Empty pack</div>
@@ -69,6 +68,9 @@
         <footer>
             <div id="room-description">
                 {{ room.description }}
+            </div>
+            <div id="footer-controls">
+                <button id="inventory-toggle" type="button" class="pullout-toggle">Pack</button>
                 <button id="ambience-toggle">♪</button>
             </div>
         </footer>

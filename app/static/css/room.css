@@ -228,10 +228,6 @@
             background: rgba(88, 56, 23, 0.9);
         }
 
-        #inventory-toggle {
-            bottom: 84px;
-        }
-
         .pullout-drawer {
             position: absolute;
             right: 50%;
@@ -315,7 +311,7 @@
         }
 
         .pullout-drawer.bottom {
-            bottom: 124px;
+            bottom: 70px;
         }
 
         .shop-item,
@@ -504,8 +500,10 @@
             background: rgba(40, 30, 20, 0.75);
             backdrop-filter: blur(4px);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 8px;
             padding: 8px 20px;
             border-radius: 0px 0px 15px 15px;
             border-top: 1px solid rgba(140, 90, 30, 0.4);
@@ -520,8 +518,30 @@
             flex: 1;
         }
 
+        #footer-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #inventory-toggle {
+            border: 1px solid rgba(196, 152, 88, 0.65);
+            background: rgba(55, 34, 14, 0.88);
+            color: #f0ddbb;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            position: static;
+        }
+
+        #inventory-toggle:hover {
+            background: rgba(88, 56, 23, 0.9);
+        }
+
         #ambience-toggle {
-            margin-left: 16px;
             font-size: 1.1rem;
             padding: 6px 14px;
             background: rgba(100, 60, 20, 0.85);
