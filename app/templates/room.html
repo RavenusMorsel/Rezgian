@@ -31,12 +31,6 @@
 
         <section id="combat-panel" aria-label="Combat controls" hidden>
             <div id="enemy-display">No active encounter</div>
-            <div class="combat-actions">
-                <button id="engage-btn" type="button">Engage</button>
-                <button id="attack-btn" type="button">Attack</button>
-                <button id="flee-btn" type="button">Flee</button>
-                <button id="use-herb-btn" type="button">Use Herb</button>
-            </div>
             <div id="combat-log" aria-live="polite"></div>
         </section>
 
@@ -70,6 +64,12 @@
                 {{ room.description }}
             </div>
             <div id="footer-controls">
+                <div class="combat-actions">
+                <button id="engage-btn" type="button">Engage</button>
+                <button id="attack-btn" type="button">Attack</button>
+                <button id="flee-btn" type="button">Flee</button>
+                <button id="use-herb-btn" type="button">Use Herb</button>
+            </div>
                 <button id="inventory-toggle" type="button" class="pullout-toggle">Pack</button>
                 <button id="ambience-toggle">♪</button>
             </div>
