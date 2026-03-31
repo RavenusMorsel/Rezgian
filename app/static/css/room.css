@@ -2,12 +2,11 @@
     font-family: 'Nobella';
     src: url('../fonts/Nobella_PERSONAL_USE_ONLY.otf') format('opentype');
     font-display: swap;
-}
-@font-face {
     font-family: 'Nobella';
     src: url('../fonts/SwirlyCanalope.otf  'opentype');
     font-display: swap;
 }
+
 :root {
     --text-body: clamp(0.95rem, 0.25vw + 0.9rem, 1.05rem);
     --text-title: clamp(1.4rem, 1.2vw + 1rem, 2.15rem);
