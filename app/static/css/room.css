@@ -2,8 +2,11 @@
     font-family: 'Nobella';
     src: url('../fonts/Nobella_PERSONAL_USE_ONLY.otf') format('opentype');
     font-display: swap;
-    font-family: 'Nobella';
-    src: url('../fonts/SwirlyCanalope.otf  'opentype');
+}
+
+@font-face {
+    font-family: 'SwirlyCanalope';
+    src: url('../fonts/SwirlyCanalope.otf') format('opentype');
     font-display: swap;
 }
 
