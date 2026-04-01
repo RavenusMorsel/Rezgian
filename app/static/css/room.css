@@ -34,10 +34,10 @@ body {
     inset: 2vh 3vw;
     border: min(2.5vh, 18px) solid transparent;
     border-left-color: #614727;
-    border-top-color:  #8a6537;
+    border-top-color: #8a6537;
     border-right-color: #614727;
-    border-bottom-color:#8a6537;
-    box-shadow: -0.8vh 0.8vh 18px rgba(0,0,0,0.7);
+    border-bottom-color: #8a6537;
+    box-shadow: -0.8vh 0.8vh 18px rgba(0, 0, 0, 0.7);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -56,52 +56,6 @@ body {
     flex-direction: column;
     overflow: hidden;
     position: relative;
-}
-
-/* Room exits rail */
-#exits-panel {
-    position: fixed;
-    right: 0px;
-    top: 52%;
-    transform: translateY(-50%);
-    z-index: 25;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    min-width: 120px;
-    background: rgba(36, 23, 10, 0);
-}
-
-#exits-title {
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #ead9b7;
-    text-align: center;
-    opacity: 0.92;
-}
-
-.exit-button {
-    display: block;
-    text-align: center;
-    text-decoration: none;
-    font-family: 'SwirlyCanalope', Georgia, serif;
-    font-size: 1rem;
-    font-weight: bolder;
-    color: #46330a;
-    background: #a55a18;
-    border-top: 8px solid #8c4a08;
-    border-bottom: 8px solid #5a3110;
-    border-left: 8px solid #733908;
-    padding: 5px 8px;
-    box-shadow: -4px 4px 15px #000000;
-    transition: background 0.15s;
-}
-
-.exit-button:hover {
-    box-shadow: 0px 0px 15px #000000;
-    color: gold;
-    background: rgba(84, 49, 12, 0.95);
 }
 
 /* Header: left stats, centered room info, right utility */
@@ -168,7 +122,7 @@ header {
     text-overflow: ellipsis;
 }
 
-/* Shared badge style for compact HUD pills */
+/* Shared HUD badges and header icon controls */
 #active-character,
 #coin-display,
 #health-display {
@@ -186,6 +140,18 @@ header {
     font-weight: normal;
 }
 
+#coin-display {
+    color: #ffdd85;
+    background: rgba(96, 68, 31, 0.65);
+    border: 1px solid rgba(181, 132, 72, 0.7);
+}
+
+#health-display {
+    color: #f3d8d8;
+    background: rgba(96, 42, 31, 0.75);
+    border: 1px solid rgba(181, 92, 72, 0.7);
+}
+
 .icon-toggle {
     border: 1px solid rgba(181, 132, 72, 0.7);
     background: rgba(96, 68, 31, 0.65);
@@ -201,71 +167,50 @@ header {
     background: rgba(122, 87, 39, 0.85);
 }
 
-#coin-display {
-    color: #ffdd85;
-    background: rgba(96, 68, 31, 0.65);
-    border: 1px solid rgba(181, 132, 72, 0.7);
-}
-
-#health-display {
-    color: #f3d8d8;
-    background: rgba(96, 42, 31, 0.75);
-    border: 1px solid rgba(181, 92, 72, 0.7);
-}
-
-/* Combat status and controls */
-#combat-panel {
+/* Room exits rail */
+#exits-panel {
+    position: fixed;
+    right: 0px;
+    top: 52%;
+    transform: translateY(-50%);
+    z-index: 25;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-    padding: 6px 10px;
-    border: 1px solid rgba(181, 132, 72, 0.6);
-    border-radius: 10px;
-    background: rgba(30, 18, 10, 0.62);
-    color: #f0ddbb;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 120px;
+    background: rgba(36, 23, 10, 0);
 }
 
-#enemy-display {
-    font-size: 0.82rem;
-    margin-bottom: 3px;
-    color: #f7e8c0;
-    text-align: center;
-}
-
-.combat-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 6px;
-}
-
-#combat-panel[hidden],
-.combat-actions[hidden] {
-    display: none !important;
-}
-
-.combat-actions button {
-    border: 1px solid #8a6537;
-    background: #f7b15b;
-    color: #4f3518;
-    border-radius: 4px;
+#exits-title {
     font-size: 0.72rem;
-    line-height: 1;
-    padding: 6px 8px;
-    cursor: pointer;
-}
-
-.combat-actions button:hover {
-    background: #8a6537;
-    color: #f7e8c0;
-}
-
-#combat-log {
-    min-height: 1.2em;
-    font-size: 0.76rem;
-    color: #d7be90;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #ead9b7;
     text-align: center;
+    opacity: 0.92;
+}
+
+.exit-button {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    font-family: 'SwirlyCanalope', Georgia, serif;
+    font-size: 1rem;
+    font-weight: bolder;
+    color: #46330a;
+    background: #a55a18;
+    border-top: 8px solid #8c4a08;
+    border-bottom: 8px solid #5a3110;
+    border-left: 8px solid #733908;
+    padding: 5px 8px;
+    box-shadow: -4px 4px 15px #000000;
+    transition: background 0.15s;
+}
+
+.exit-button:hover {
+    box-shadow: 0px 0px 15px #000000;
+    color: gold;
+    background: rgba(84, 49, 12, 0.95);
 }
 
 /* Pullout drawers (shop/inventory) */
@@ -306,6 +251,14 @@ header {
     scrollbar-color: #a56a2b rgba(27, 16, 8, 0.55);
 }
 
+.pullout-drawer.top {
+    top: 124px;
+}
+
+.pullout-drawer.bottom {
+    bottom: 70px;
+}
+
 .pullout-drawer::-webkit-scrollbar {
     width: 10px;
 }
@@ -329,14 +282,6 @@ header {
 
 .pullout-drawer::-webkit-scrollbar-corner {
     background: transparent;
-}
-
-.econ-title {
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    font-size: 0.67rem;
-    margin-bottom: 6px;
-    color: #d9bf8d;
 }
 
 .drawer-header {
@@ -366,15 +311,15 @@ header {
     background: rgba(88, 56, 23, 0.9);
 }
 
-.pullout-drawer.top {
-    top: 124px;
+/* Economy panel content */
+.econ-title {
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-size: 0.67rem;
+    margin-bottom: 6px;
+    color: #d9bf8d;
 }
 
-.pullout-drawer.bottom {
-    bottom: 70px;
-}
-
-/* Economy list rows */
 .shop-item,
 .inventory-item {
     display: flex;
@@ -507,23 +452,6 @@ header {
     border-top: 1px solid rgba(140, 90, 30, 0.5);
 }
 
-#action-toggle {
-    padding: 4px 7px;
-    font-size: 0.72rem;
-    letter-spacing: 0.02em;
-    text-transform: lowercase;
-    background: rgba(247, 177, 91, 0.88);
-    color: #4f3518;
-    border: 1px solid #8a6537;
-    border-radius: 5px;
-    line-height: 1;
-}
-
-#action-toggle.active {
-    background: #8a6537;
-    color: #f7e8c0;
-}
-
 #chat-inputs input {
     padding: 8px 10px;
     font-size: var(--text-ui);
@@ -552,6 +480,23 @@ header {
 
 #chat-inputs button:hover {
     background: #8a6537;
+}
+
+#action-toggle {
+    padding: 4px 7px;
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    text-transform: lowercase;
+    background: rgba(247, 177, 91, 0.88);
+    color: #4f3518;
+    border: 1px solid #8a6537;
+    border-radius: 5px;
+    line-height: 1;
+}
+
+#action-toggle.active {
+    background: #8a6537;
+    color: #f7e8c0;
 }
 
 /* Footer utility strip */
@@ -606,6 +551,61 @@ footer {
     background: rgba(140, 90, 30, 0.95);
 }
 
+/* Combat status and controls */
+#combat-panel {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid rgba(181, 132, 72, 0.6);
+    border-radius: 10px;
+    background: rgba(30, 18, 10, 0.62);
+    color: #f0ddbb;
+}
+
+#enemy-display {
+    font-size: 0.82rem;
+    margin-bottom: 3px;
+    color: #f7e8c0;
+    text-align: center;
+}
+
+#combat-log {
+    min-height: 1.2em;
+    font-size: 0.76rem;
+    color: #d7be90;
+    text-align: center;
+}
+
+.combat-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.combat-actions button {
+    border: 1px solid #8a6537;
+    background: #f7b15b;
+    color: #4f3518;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    line-height: 1;
+    padding: 6px 8px;
+    cursor: pointer;
+}
+
+.combat-actions button:hover {
+    background: #8a6537;
+    color: #f7e8c0;
+}
+
+#combat-panel[hidden],
+.combat-actions[hidden] {
+    display: none !important;
+}
+
 /* Mobile layout adjustments */
 @media (max-width: 768px) {
     :root {
@@ -650,10 +650,6 @@ footer {
         align-items: flex-end;
     }
 
-    #chat-log {
-        padding: 12px 14px;
-    }
-
     #exits-panel {
         width: 100%;
         position: absolute;
@@ -663,9 +659,22 @@ footer {
         top: 20px;
     }
 
-    #inventory-toggle {
-        padding: 5px 8px;
-        font-size: 0.72rem;
+    #exits-title {
+        width: 100%;
+    }
+
+    #chat-log {
+        padding: 12px 14px;
+    }
+
+    #chat-inputs {
+        display: flex;
+        flex-direction: column;
+        padding: 12px 14px;
+    }
+
+    #action-toggle {
+        align-self: flex-start;
     }
 
     .pullout-drawer {
@@ -681,18 +690,9 @@ footer {
         bottom: 152px;
     }
 
-    #exits-title {
-        width: 100%;
-    }
-
-    #chat-inputs {
-        display: flex;
-        flex-direction: column;
-        padding: 12px 14px;
-    }
-
-    #action-toggle {
-        align-self: flex-start;
+    #inventory-toggle {
+        padding: 5px 8px;
+        font-size: 0.72rem;
     }
 
     #room-description {
