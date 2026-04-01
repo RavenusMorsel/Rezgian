@@ -9,20 +9,61 @@ from sqlalchemy.orm import Session
 from app.database.base import get_db
 from app.database.models import Character, CombatEncounter
 from app.routes.auth import get_current_character
+from app.routes.economy import ITEM_CATALOG, _dump_inventory, _load_inventory
 from app.systems.player_state import apply_damage, get_or_create_stats, serialize_vitals
 
 router = APIRouter()
 COMBAT_ENABLED_ROOMS = {"cellar"}
 
 
-ENEMY_CATALOG: dict[str, dict] = {
-    "cellar": {
-        "name": "Cellar Rat",
-        "health": 14,
-        "player_damage": (3, 8),
-        "enemy_damage": (1, 4),
-        "reward": (2, 5),
-    },
+ENEMY_CATALOG: dict[str, list[dict]] = {
+    "cellar": [
+        {
+            "name": "Skittering Rat",
+            "weight": 40,
+            "health": 12,
+            "player_damage": (3, 8),
+            "enemy_damage": (1, 3),
+            "reward": (2, 4),
+            "drops": [
+                {"item_id": "rat_tail", "chance": 0.45, "quantity": (1, 1)},
+            ],
+        },
+        {
+            "name": "Bloated Cellar Rat",
+            "weight": 30,
+            "health": 16,
+            "player_damage": (3, 8),
+            "enemy_damage": (2, 4),
+            "reward": (3, 6),
+            "drops": [
+                {"item_id": "mildewed_fang", "chance": 0.35, "quantity": (1, 1)},
+            ],
+        },
+        {
+            "name": "Gnawtooth Rat",
+            "weight": 20,
+            "health": 20,
+            "player_damage": (3, 8),
+            "enemy_damage": (2, 5),
+            "reward": (5, 8),
+            "drops": [
+                {"item_id": "mildewed_fang", "chance": 0.55, "quantity": (1, 1)},
+                {"item_id": "cellar_key_fragment", "chance": 0.18, "quantity": (1, 1)},
+            ],
+        },
+        {
+            "name": "Starved Cave Bat",
+            "weight": 10,
+            "health": 10,
+            "player_damage": (3, 8),
+            "enemy_damage": (1, 5),
+            "reward": (4, 7),
+            "drops": [
+                {"item_id": "bat_wing", "chance": 0.5, "quantity": (1, 2)},
+            ],
+        },
+    ]
 }
 
 
@@ -30,9 +71,33 @@ class CombatRoomRequest(BaseModel):
     room_id: str = Field(min_length=1, max_length=64)
 
 
-def _enemy_for_room(room_id: str) -> dict | None:
-    """Return encounter profile for a combat-enabled room."""
-    return ENEMY_CATALOG.get(room_id)
+def _enemy_pool_for_room(room_id: str) -> list[dict]:
+    """Return encounter profiles for a combat-enabled room."""
+    return ENEMY_CATALOG.get(room_id, [])
+
+
+def _enemy_profile_for_encounter(room_id: str, enemy_name: str) -> dict | None:
+    """Resolve profile by persisted encounter name."""
+    for profile in _enemy_pool_for_room(room_id):
+        if profile["name"] == enemy_name:
+            return profile
+    return None
+
+
+def _roll_enemy_for_room(room_id: str) -> dict | None:
+    """Choose a weighted enemy variant for room encounter creation."""
+    pool = _enemy_pool_for_room(room_id)
+    if not pool:
+        return None
+
+    total_weight = sum(max(1, int(profile.get("weight", 1))) for profile in pool)
+    pick = random.randint(1, total_weight)
+    running = 0
+    for profile in pool:
+        running += max(1, int(profile.get("weight", 1)))
+        if pick <= running:
+            return profile
+    return pool[-1]
 
 
 def _serialize_encounter(encounter: CombatEncounter | None) -> dict | None:
@@ -58,7 +123,7 @@ def _get_encounter(db: Session, character: Character, room_id: str) -> CombatEnc
 
 
 def _create_encounter(db: Session, character: Character, room_id: str) -> CombatEncounter:
-    profile = _enemy_for_room(room_id)
+    profile = _roll_enemy_for_room(room_id)
     if profile is None:
         raise HTTPException(status_code=400, detail="Combat is not available in this room")
 
@@ -73,6 +138,27 @@ def _create_encounter(db: Session, character: Character, room_id: str) -> Combat
     db.add(encounter)
     db.flush()
     return encounter
+
+
+def _resolve_enemy_drops(profile: dict) -> list[dict]:
+    """Resolve random drop list for defeated enemy profile."""
+    dropped: list[dict] = []
+    for drop in profile.get("drops", []):
+        chance = float(drop.get("chance", 0.0))
+        if random.random() > chance:
+            continue
+
+        item_id = str(drop.get("item_id", "")).strip()
+        if not item_id:
+            continue
+
+        qty_min, qty_max = drop.get("quantity", (1, 1))
+        quantity = random.randint(int(qty_min), int(qty_max))
+        if quantity <= 0:
+            continue
+
+        dropped.append({"item_id": item_id, "quantity": quantity})
+    return dropped
 
 
 @router.get("/state")
@@ -142,7 +228,10 @@ def attack(
     if encounter is None:
         raise HTTPException(status_code=400, detail="No active encounter. Engage first.")
 
-    profile = _enemy_for_room(payload.room_id)
+    profile = _enemy_profile_for_encounter(payload.room_id, encounter.enemy_name)
+    if profile is None:
+        raise HTTPException(status_code=500, detail="Encounter profile mismatch")
+
     min_p, max_p = profile["player_damage"]
     min_e, max_e = profile["enemy_damage"]
     min_reward, max_reward = profile["reward"]
@@ -155,13 +244,34 @@ def attack(
     if encounter.enemy_health <= 0:
         reward = random.randint(min_reward, max_reward)
         character.currency += reward
+        inventory = _load_inventory(character.inventory_json)
+        drops = _resolve_enemy_drops(profile)
+        reward_lines = [f"{encounter.enemy_name} falls. You gain {reward} coins."]
+
+        serialized_drops: list[dict] = []
+        for drop in drops:
+            item_id = drop["item_id"]
+            quantity = int(drop["quantity"])
+            inventory[item_id] = inventory.get(item_id, 0) + quantity
+            item_meta = ITEM_CATALOG.get(item_id)
+            item_name = item_meta["name"] if item_meta else item_id.replace("_", " ").title()
+            reward_lines.append(f"Loot: {item_name} x{quantity}.")
+            serialized_drops.append({
+                "item_id": item_id,
+                "name": item_name,
+                "quantity": quantity,
+            })
+
+        if drops:
+            character.inventory_json = _dump_inventory(inventory)
+
         db.delete(encounter)
         db.commit()
         return {
             "status": "victory",
             "combat_available": True,
-            "log": log + [f"{encounter.enemy_name} falls. You gain {reward} coins."],
-            "reward": {"currency": reward},
+            "log": log + reward_lines,
+            "reward": {"currency": reward, "items": serialized_drops},
             "vitals": serialize_vitals(stats),
             "encounter": None,
             "currency": character.currency,

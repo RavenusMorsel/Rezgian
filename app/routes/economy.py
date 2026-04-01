@@ -44,6 +44,26 @@ ITEM_CATALOG: dict[str, dict] = {
         "description": "A slow-burning torch for dark halls below.",
         "price": 9,
     },
+    "rat_tail": {
+        "name": "Rat Tail",
+        "description": "A wiry tail torn from a cellar pest.",
+        "price": 2,
+    },
+    "mildewed_fang": {
+        "name": "Mildewed Fang",
+        "description": "A cracked fang with a sour cellar stink.",
+        "price": 4,
+    },
+    "bat_wing": {
+        "name": "Bat Wing",
+        "description": "Thin wing membrane prized by odd traders.",
+        "price": 3,
+    },
+    "cellar_key_fragment": {
+        "name": "Cellar Key Fragment",
+        "description": "A chipped iron fragment from an older lock.",
+        "price": 10,
+    },
 }
 
 ROOM_SHOPS: dict[str, list[str]] = {
