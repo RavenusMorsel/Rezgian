@@ -193,10 +193,11 @@ header {
 .exit-button {
     display: block;
     text-align: center;
-    text-decoration: none;
+    text-decoration:none;
     font-family: 'SwirlyCanalope', Georgia, serif;
     font-size: 1.5rem;
-    text-shadow: #000 0px 0px 2px;
+    -webkit-text-stroke: 2px rgb(0, 0, 0);
+
     font-weight:900;
     color: #46330a;
     background: #a55a18;
